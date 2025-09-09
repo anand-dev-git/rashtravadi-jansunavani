@@ -105,7 +105,6 @@ function PrintPageContent() {
       whatsapp: details.whatsapp,
       createdDate: new Date().toLocaleString(),
       remarks: remarks,
-      dbEmployee: member,
     };
 
     // Generate and download PDF
@@ -178,7 +177,7 @@ function PrintPageContent() {
                   ) : null}
                   <Detail label="Whatsapp" value={details.whatsapp} />
                   <Detail label="Status" value={details.status} />
-                  <Detail label="DB Employee Name" value={details.member} />
+{/*                   <Detail label="DB Employee Name" value={details.member} /> */}
                   <Detail label="Remarks" value={details.remarks} />
                 </div>
               </div>
