@@ -407,7 +407,7 @@ function RegisterPageContent() {
                     htmlFor="memberName"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    DB Employee name
+                    Party Member Name
                   </label>
                   <input
                     id="memberName"
@@ -423,7 +423,7 @@ function RegisterPageContent() {
                     htmlFor="memberContact"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    DB Employee contact
+                    Party Member Contact
                   </label>
                   <input
                     id="memberContact"
