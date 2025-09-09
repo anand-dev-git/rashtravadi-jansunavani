@@ -2,6 +2,10 @@
 import { useState } from "react";
 import AuthGuard from "@/components/auth-guard";
 import { generateTicketPDF, generatePrintableHTML } from "@/lib/pdf-generator";
+import {
+  getEnglishProblems,
+  normalizeProblemForStorage,
+} from "@/lib/translation-dictionary";
 
 function RegisterPageContent() {
   const [formData, setFormData] = useState({
@@ -61,7 +65,7 @@ function RegisterPageContent() {
         createdDate,
         age: formData.age,
         gender: formData.gender,
-        problem: formData.problem,
+        problem: normalizeProblemForStorage(formData.problem),
         pdf_link: "",
         name: formData.name,
         memberName: formData.memberName || null,
@@ -89,7 +93,7 @@ function RegisterPageContent() {
         language: formData.language,
         gender: formData.gender,
         age: formData.age,
-        problem: formData.problem,
+        problem: normalizeProblemForStorage(formData.problem),
         status: formData.status,
         awareOfMember: formData.awareOfMember,
         memberName: formData.memberName || undefined,
@@ -344,27 +348,11 @@ function RegisterPageContent() {
                 <option value="" disabled>
                   Select problem department
                 </option>
-                <option value="Water Supply Dept.">Water Supply Dept.</option>
-                <option value="Solid Wst Mgmt Dept.">
-                  Solid Wst Mgmt Dept.
-                </option>
-                <option value="Build. Perm. Dept.">Build. Perm. Dept.</option>
-                <option value="Street Light Dept.">Street Light Dept.</option>
-                <option value="Property Tax Dept.">Property Tax Dept.</option>
-                <option value="Police Dept.">Police Dept.</option>
-                <option value="Revenue Dept.">Revenue Dept.</option>
-                <option value="City Survey Officer">City Survey Officer</option>
-                <option value="Stamp & Reg. Dept.">Stamp & Reg. Dept.</option>
-                <option value="Slum Rehabilitation">Slum Rehabilitation</option>
-                <option value="MSEDCL /Mahavitran">MSEDCL /Mahavitran</option>
-                <option value="Co-op Society Dept.">Co-op Society Dept.</option>
-                <option value="Health Department">Health Department</option>
-                <option value="PMRDA">PMRDA</option>
-                <option value="Dy. Charity Comm.">Dy. Charity Comm.</option>
-                <option value="RTO/Transport Dept.">RTO/Transport Dept.</option>
-                <option value="PMPL">RTO/Transport Dept.</option>
-                <option value="Social Welfare">RTO/Transport Dept.</option>
-                <option value="MHADA">RTO/Transport Dept.</option>
+                {getEnglishProblems().map((problem) => (
+                  <option key={problem} value={problem}>
+                    {problem}
+                  </option>
+                ))}
               </select>
             </div>
 
