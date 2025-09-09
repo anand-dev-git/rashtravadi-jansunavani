@@ -60,7 +60,7 @@ export async function generateTicketPDF(
     const logoBase64 = await loadLogoAsBase64("/logo_ticket_2.png");
     if (logoBase64) {
       // Add logo image
-      doc.addImage(logoBase64, "PNG", 165, 5, 30, 30);
+      doc.addImage(logoBase64, "PNG", 165, 5, 40, 30);
     } else {
       // Fallback to simple logo
       doc.addImage(FALLBACK_LOGO, "PNG", 165, 5, 25, 25);
@@ -88,7 +88,7 @@ export async function generateTicketPDF(
 
   // Ticket number in header
   doc.setFontSize(10);
-  doc.text(`Ticket: ${data.ticketNumber}`, 45, 40);
+  doc.text(`Ticket: ${data.ticketNumber}`, 45, 25);
 
   // Reset text color
   doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
