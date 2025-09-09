@@ -380,7 +380,7 @@ export function generatePrintableHTML(
         border-radius: 4px; 
         display: flex; 
         align-items: center; 
-        justify-content: center;
+        justify-content: space-between;
         flex-shrink: 0;
       }
       .logo img { 
@@ -535,7 +535,8 @@ export function generatePrintableHTML(
       <body>
         <div class="header">
           <div class="logo">
-            <img src="/logo.png" alt="Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <img src="/logo_ticket_1.png" alt="Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <img src="/logo_ticket_2.png" alt="Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
             <div class="logo-text" style="display: none;">RJS</div>
           </div>
           <div class="header-content">
