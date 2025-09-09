@@ -60,10 +60,10 @@ export async function generateTicketPDF(
     const logoBase64 = await loadLogoAsBase64("/logo_ticket_2.png");
     if (logoBase64) {
       // Add logo image
-      doc.addImage(logoBase64, "PNG", 125, 5, 30, 30);
+      doc.addImage(logoBase64, "PNG", 150, 5, 30, 30);
     } else {
       // Fallback to simple logo
-      doc.addImage(FALLBACK_LOGO, "PNG", 200, 5, 25, 25);
+      doc.addImage(FALLBACK_LOGO, "PNG", 150, 5, 25, 25);
     }
   } catch (error) {
     console.log("Logo not available, using text placeholder");
@@ -76,7 +76,7 @@ export async function generateTicketPDF(
   }
 
   // Main title
-  doc.setTextColor(255, 255, 255);
+  doc.setTextColor(0, 0, 0);
   doc.setFontSize(16);
   doc.setFont("helvetica", "bold");
   doc.text("Rashtrawadi Jansunavani", 45, 15);
