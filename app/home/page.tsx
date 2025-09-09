@@ -102,6 +102,34 @@ export default function HomePage() {
               </svg>
             </div>
           </a>
+
+          {/* Dashboard - Only show for dbuser01 */}
+          <a
+            href="/dashboard"
+            className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <div className="flex items-start justify-between">
+              <h3 className="text-lg font-semibold">Dashboard</h3>
+            </div>
+            <p className="mt-2 text-sm text-gray-600">
+              View ticket statistics and analytics.
+            </p>
+            <div className="mt-4 inline-flex items-center text-indigo-600 font-medium group-hover:translate-x-0.5 transition-transform">
+              View analytics
+              <svg
+                className="ml-1 h-4 w-4"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10.293 3.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 11-1.414-1.414L13.586 10 10.293 6.707a1 1 0 010-1.414z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+          </a>
         </div>
       </section>
     </div>

@@ -23,7 +23,7 @@ export async function PUT(request: Request, ctx: RouteContext) {
   await ensureComplaintRecordsTable();
   const body = await request.json();
 
-  const allowed = ["status", "remarks", "memberName"] as const;
+  const allowed = ["status", "remarks", "dbEmp", "complaintSource"] as const;
   const updates = allowed
     .filter((k) => body[k] !== undefined)
     .map((k) => `${k} = ?`);

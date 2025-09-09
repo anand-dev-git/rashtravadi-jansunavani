@@ -1,18 +1,23 @@
 "use client";
 import { useState } from "react";
+import AuthGuard from "@/components/auth-guard";
+import { generateTicketPDF, generatePrintableHTML } from "@/lib/pdf-generator";
 
-export default function RegisterPage() {
+function RegisterPageContent() {
   const [formData, setFormData] = useState({
     name: "",
     address: "",
-    constituency: "",
+    constituency: "hadapasar",
     language: "english",
     gender: "male",
-    problem: "Water Supply Dept.",
+    age: "",
+    problem: "",
     awareOfMember: "no" as "yes" | "no",
     memberName: "",
-    memberContact: "",
-    whatsapp: "",
+    memberPhone: "",
+    phoneNumber: "",
+    status: "",
+    complaintSource: "Web",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,43 +38,38 @@ export default function RegisterPage() {
     setCreatedTicket(null);
     setLoading(true);
     try {
-      // 1) Get all entries and latest
-      const listRes = await fetch("/api/complaint-records", {
+      // 1) Get next ticket number from API
+      const ticketRes = await fetch("/api/ticket-number", {
         cache: "no-store",
       });
-      if (!listRes.ok) throw new Error(`List failed: ${listRes.status}`);
-      const list = await listRes.json();
-      const last = Array.isArray(list) && list.length > 0 ? list[0] : null;
+      if (!ticketRes.ok)
+        throw new Error(`Ticket number generation failed: ${ticketRes.status}`);
+      const { ticketNumber } = await ticketRes.json();
 
-      // 2) Compute next ticket number (increment numeric part)
-      const previous = last?.ticketNumber ?? "0";
-      const prevNum = Number(String(previous).replace(/\D+/g, "")) || 0;
-      const nextNum = prevNum + 1;
-      const ticketNumber = String(nextNum);
-
-      // 3) Current timestamp for createdDate
+      // 2) Current timestamp for createdDate
       const createdDate = new Date()
         .toISOString()
         .slice(0, 19)
         .replace("T", " ");
 
-      // 4) POST to create record
+      // 3) POST to create record
       const payload = {
         ticketNumber,
         address: formData.address,
         constituency: formData.constituency,
         language: formData.language,
         createdDate,
-        age: null,
+        age: formData.age,
         gender: formData.gender,
         problem: formData.problem,
         pdf_link: "",
         name: formData.name,
         memberName: formData.memberName || null,
-        phoneNumber: formData.whatsapp,
+        phoneNumber: formData.phoneNumber,
         status: null,
         remarks: null,
-        memberPhone: formData.memberContact || null,
+        memberPhone: formData.memberPhone || null,
+        complaintSource: formData.complaintSource,
       };
       const createRes = await fetch("/api/complaint-records", {
         method: "POST",
@@ -80,32 +80,71 @@ export default function RegisterPage() {
       setCreatedTicket(ticketNumber);
       showToast("success", `Created ticket #${ticketNumber}`);
 
-      // 5) Generate PDF (browser print) with entered information
-      const html = buildPrintableHtml({
+      // 5) Generate PDF with entered information
+      const ticketData = {
         ticketNumber,
         name: formData.name,
         address: formData.address,
         constituency: formData.constituency,
         language: formData.language,
         gender: formData.gender,
+        age: formData.age,
         problem: formData.problem,
+        status: formData.status,
         awareOfMember: formData.awareOfMember,
         memberName: formData.memberName || undefined,
-        memberContact: formData.memberContact || undefined,
-        whatsapp: formData.whatsapp,
+        memberContact: formData.memberPhone || undefined,
+        whatsapp: formData.phoneNumber,
         createdDate,
-      });
+      };
+
+      // Generate and download PDF
+      await generateTicketPDF(ticketData, false);
+
+      // Send WhatsApp message with PDF
+      try {
+        const whatsappResponse = await fetch("/api/send-whatsapp", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            phoneNumber: formData.phoneNumber,
+            ticketNumber: ticketNumber,
+            ticketData: ticketData,
+          }),
+        });
+
+        const whatsappResult = await whatsappResponse.json();
+
+        if (whatsappResult.success) {
+          console.log(
+            "WhatsApp message sent successfully:",
+            whatsappResult.messageId
+          );
+        } else {
+          console.warn("WhatsApp message failed:", whatsappResult.error);
+          // Don't fail the registration if WhatsApp fails
+        }
+      } catch (whatsappError) {
+        console.warn("WhatsApp sending error:", whatsappError);
+        // Don't fail the registration if WhatsApp fails
+      }
+
+      // Also open printable HTML version
+      const html = generatePrintableHTML(ticketData, false);
       const w = window.open("", "_blank", "noopener,noreferrer");
       if (w) {
         w.document.open();
         w.document.write(html);
         w.document.close();
         w.focus();
-        w.print();
       }
 
-      // 6) Placeholder for Twilio WhatsApp
-      sendWhatsAppPlaceholder(formData.whatsapp, ticketNumber);
+      // Show success message with WhatsApp info
+      alert(
+        `Registration successful! Ticket: ${ticketNumber}\n\nWhatsApp message with PDF has been sent to ${formData.phoneNumber}`
+      );
     } catch (e: any) {
       setError(e?.message ?? "Failed to create record");
       showToast("error", e?.message ?? "Failed to create record");
@@ -129,7 +168,7 @@ export default function RegisterPage() {
       awareOfMember: value,
       // Clear member fields when switching to no
       memberName: value === "no" ? "" : prev.memberName,
-      memberContact: value === "no" ? "" : prev.memberContact,
+      memberContact: value === "no" ? "" : prev.memberPhone,
     }));
   }
 
@@ -184,32 +223,34 @@ export default function RegisterPage() {
               >
                 Constituency
               </label>
-              <input
+              <select
                 id="constituency"
                 name="constituency"
-                type="text"
                 required
                 value={formData.constituency}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              />
+                disabled
+                className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              >
+                <option value="hadapasar">hadapasar</option>
+              </select>
             </div>
 
-            {/* Whatsapp number */}
+            {/* Contact number */}
             <div>
               <label
-                htmlFor="whatsapp"
+                htmlFor="phoneNumber"
                 className="block text-sm font-medium text-gray-700"
               >
-                Whatsapp number
+                Contact number
               </label>
               <input
-                id="whatsapp"
-                name="whatsapp"
+                id="phoneNumber"
+                name="phoneNumber"
                 type="tel"
                 inputMode="tel"
                 required
-                value={formData.whatsapp}
+                value={formData.phoneNumber}
                 onChange={handleChange}
                 className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
@@ -257,6 +298,33 @@ export default function RegisterPage() {
               </select>
             </div>
 
+            {/* Age */}
+            <div>
+              <label
+                htmlFor="age"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Age
+              </label>
+              <select
+                id="age"
+                name="age"
+                required
+                value={formData.age}
+                onChange={handleChange}
+                className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              >
+                <option value="" disabled>
+                  Select age range
+                </option>
+                <option value="18-25">18-25</option>
+                <option value="26-35">26-35</option>
+                <option value="36-50">36-50</option>
+                <option value="51-65">51-65</option>
+                <option value="65+">65+</option>
+              </select>
+            </div>
+
             {/* Problem */}
             <div>
               <label
@@ -273,29 +341,37 @@ export default function RegisterPage() {
                 onChange={handleChange}
                 className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               >
-                <option>Water Supply Dept.</option>
-                <option>Solid Wst Mgmt Dept.</option>
-                <option>Build. Perm. Dept.</option>
-                <option>Street Light Dept.</option>
-                <option>Property Tax Dept.</option>
-                <option>Police Dept.</option>
-                <option>Revenue Dept.</option>
-                <option>City Survey Officer</option>
-                <option>Stamp & Reg. Dept.</option>
-                <option>Slum Rehabilitation</option>
-                <option>MSEDCL /Mahavitran</option>
-                <option>Co-op Society Dept.</option>
-                <option>Health Department</option>
-                <option>PMRDA</option>
-                <option>Dy. Charity Comm.</option>
-                <option>RTO/Transport Dept.</option>
+                <option value="" disabled>
+                  Select problem department
+                </option>
+                <option value="Water Supply Dept.">Water Supply Dept.</option>
+                <option value="Solid Wst Mgmt Dept.">
+                  Solid Wst Mgmt Dept.
+                </option>
+                <option value="Build. Perm. Dept.">Build. Perm. Dept.</option>
+                <option value="Street Light Dept.">Street Light Dept.</option>
+                <option value="Property Tax Dept.">Property Tax Dept.</option>
+                <option value="Police Dept.">Police Dept.</option>
+                <option value="Revenue Dept.">Revenue Dept.</option>
+                <option value="City Survey Officer">City Survey Officer</option>
+                <option value="Stamp & Reg. Dept.">Stamp & Reg. Dept.</option>
+                <option value="Slum Rehabilitation">Slum Rehabilitation</option>
+                <option value="MSEDCL /Mahavitran">MSEDCL /Mahavitran</option>
+                <option value="Co-op Society Dept.">Co-op Society Dept.</option>
+                <option value="Health Department">Health Department</option>
+                <option value="PMRDA">PMRDA</option>
+                <option value="Dy. Charity Comm.">Dy. Charity Comm.</option>
+                <option value="RTO/Transport Dept.">RTO/Transport Dept.</option>
+                <option value="PMPL">RTO/Transport Dept.</option>
+                <option value="Social Welfare">RTO/Transport Dept.</option>
+                <option value="MHADA">RTO/Transport Dept.</option>
               </select>
             </div>
 
-            {/* Aware of any existing member */}
+            {/* Aware of any existing DB Employee */}
             <fieldset>
               <legend className="block text-sm font-medium text-gray-700">
-                Do you have any reference of Rashtrawadi Congress member?
+                Do you have any reference of Rashtrawadi Congress Member?
               </legend>
               <div className="mt-2 flex items-center gap-6">
                 <label className="inline-flex items-center gap-2 text-sm text-gray-700">
@@ -331,7 +407,7 @@ export default function RegisterPage() {
                     htmlFor="memberName"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Member name
+                    DB Employee name
                   </label>
                   <input
                     id="memberName"
@@ -347,14 +423,14 @@ export default function RegisterPage() {
                     htmlFor="memberContact"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Member contact
+                    DB Employee contact
                   </label>
                   <input
                     id="memberContact"
                     name="memberContact"
                     type="tel"
                     inputMode="tel"
-                    value={formData.memberContact}
+                    value={formData.memberPhone}
                     onChange={handleChange}
                     className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />
@@ -396,70 +472,12 @@ export default function RegisterPage() {
   );
 }
 
-function buildPrintableHtml(data: {
-  ticketNumber: string;
-  name: string;
-  address: string;
-  constituency: string;
-  language: string;
-  gender: string;
-  problem: string;
-  awareOfMember: "yes" | "no";
-  memberName?: string;
-  memberContact?: string;
-  whatsapp: string;
-  createdDate: string;
-}) {
-  const style = `
-    <style>
-      body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial; padding: 24px; color: #111827; }
-      h1 { font-size: 20px; margin: 0 0 16px; }
-      .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
-      .row { display: contents; }
-      .label { color: #6B7280; font-size: 12px; }
-      .value { color: #111827; font-weight: 600; margin-top: 2px; font-size: 14px; }
-      .full { grid-column: 1 / -1; }
-    </style>
-  `;
-  const fields = [
-    ["Ticket No.", data.ticketNumber],
-    ["Created", data.createdDate],
-    ["Name", data.name],
-    ["Address", data.address, true],
-    ["Constituency", data.constituency],
-    ["Language", data.language],
-    ["Gender", data.gender],
-    ["Problem", data.problem, true],
-    ["Aware of Member", data.awareOfMember],
-    data.memberName ? ["Member Name", data.memberName] : null,
-    data.memberContact ? ["Member Contact", data.memberContact] : null,
-    ["Whatsapp", data.whatsapp],
-  ].filter(Boolean) as Array<[string, string, boolean?]>;
-
-  const detailsHtml = fields
-    .map(
-      ([label, value, full]) => `
-      <div class="row ${full ? "full" : ""}">
-        <div class="label">${label}</div>
-        <div class="value">${value}</div>
-      </div>
-    `
-    )
-    .join("");
-
-  return `
-    <html>
-      <head>
-        <meta charSet="utf-8" />
-        <title>Ticket ${data.ticketNumber}</title>
-        ${style}
-      </head>
-      <body>
-        <h1>Registration Details</h1>
-        <div class="grid">${detailsHtml}</div>
-      </body>
-    </html>
-  `;
+export default function RegisterPage() {
+  return (
+    <AuthGuard>
+      <RegisterPageContent />
+    </AuthGuard>
+  );
 }
 
 function sendWhatsAppPlaceholder(phone: string, ticket: string) {

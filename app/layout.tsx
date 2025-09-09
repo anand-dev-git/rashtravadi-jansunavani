@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import Breadcrumb from "@/components/breadcrumb";
 
 export const metadata: Metadata = {
   title: "Rashtrawadi Jansunavani",
@@ -29,7 +30,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col bg-gray-50 text-gray-900`}
       >
-        <Header showLoginButton />
+        <Header />
+        <Breadcrumb />
         <main className="flex-1 w-full bg-gray-50">{children}</main>
         <Footer />
       </body>

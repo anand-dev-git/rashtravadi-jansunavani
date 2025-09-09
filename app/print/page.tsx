@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import AuthGuard from "@/components/auth-guard";
+import { generateTicketPDF, generatePrintableHTML } from "@/lib/pdf-generator";
 
 type RegistrationDetails = {
   status: string;
@@ -14,11 +16,12 @@ type RegistrationDetails = {
   problem: string;
   awareOfMember: "yes" | "no";
   memberName?: string;
+  dbEmp?: string;
   memberContact?: string;
   whatsapp: string;
 };
 
-export default function PrintPage() {
+function PrintPageContent() {
   const [ticketInput, setTicketInput] = useState("");
   const [details, setDetails] = useState<RegistrationDetails | null>(null);
   const [status, setStatus] = useState(
@@ -73,7 +76,7 @@ export default function PrintPage() {
       };
       setDetails(nextDetails);
       if (typeof r.status === "string") setStatus(r.status as typeof status);
-      setMember(r.memberName ?? "");
+      setMember(r.dbEmp ?? "");
       setRemarks(r.remarks ?? "");
     } catch {
       setDetails(null);
@@ -83,16 +86,39 @@ export default function PrintPage() {
     }
   }
 
-  function handlePrintClick() {
+  async function handlePrintClick() {
     if (!details) return;
-    const html = buildPrintableHtml(details, status, remarks, member);
+
+    // Prepare ticket data for PDF generation
+    const ticketData = {
+      ticketNumber: details.ticketNumber,
+      name: details.name,
+      address: details.address,
+      constituency: details.constituency,
+      language: details.language,
+      gender: details.gender,
+      problem: details.problem,
+      status: status,
+      awareOfMember: details.awareOfMember,
+      memberName: details.memberName,
+      memberContact: details.memberContact,
+      whatsapp: details.whatsapp,
+      createdDate: new Date().toLocaleString(),
+      remarks: remarks,
+      dbEmployee: member,
+    };
+
+    // Generate and download PDF
+    await generateTicketPDF(ticketData, true);
+
+    // Also open printable HTML version
+    const html = generatePrintableHTML(ticketData, true);
     const printWindow = window.open("", "_blank", "noopener,noreferrer");
     if (!printWindow) return;
     printWindow.document.open();
     printWindow.document.write(html);
     printWindow.document.close();
     printWindow.focus();
-    printWindow.print();
   }
 
   return (
@@ -152,7 +178,7 @@ export default function PrintPage() {
                   ) : null}
                   <Detail label="Whatsapp" value={details.whatsapp} />
                   <Detail label="Status" value={details.status} />
-                  <Detail label="Member" value={details.member} />
+                  <Detail label="DB Employee Name" value={details.member} />
                   <Detail label="Remarks" value={details.remarks} />
                 </div>
               </div>
@@ -179,73 +205,12 @@ export default function PrintPage() {
   );
 }
 
-function buildPrintableHtml(
-  details: RegistrationDetails,
-  status: string,
-  remarks: string,
-  member: string
-) {
-  const style = `
-    <style>
-      body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji"; padding: 24px; color: #111827; }
-      h1 { font-size: 20px; margin: 0 0 16px; }
-      .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
-      .row { display: contents; }
-      .label { color: #6B7280; font-size: 12px; }
-      .value { color: #111827; font-weight: 600; margin-top: 2px; font-size: 14px; }
-      .full { grid-column: 1 / -1; }
-      .section { margin-top: 20px; }
-    </style>
-  `;
-  const fields = [
-    ["Ticket No.", details.ticketNumber],
-    ["Name", details.name],
-    ["Address", details.address, true],
-    ["Constituency", details.constituency],
-    ["Language", details.language],
-    ["Gender", details.gender],
-    ["Problem", details.problem, true],
-    ["Aware of Member", details.awareOfMember],
-    details.memberName ? ["Member Name", details.memberName] : null,
-    details.memberContact ? ["Member Contact", details.memberContact] : null,
-    ["Whatsapp", details.whatsapp],
-  ].filter(Boolean) as Array<[string, string, boolean?]>;
-
-  const detailsHtml = fields
-    .map(
-      ([label, value, full]) => `
-      <div class="row ${full ? "full" : ""}">
-        <div class="label">${label}</div>
-        <div class="value">${value}</div>
-      </div>
-    `
-    )
-    .join("");
-
-  const footerHtml = `
-    <div class="section">
-      <div class="grid">
-        <div class="row"><div class="label">Status</div><div class="value">${status}</div></div>
-        <div class="row"><div class="label">Member</div><div class="value">${member}</div></div>
-        <div class="row full"><div class="label">Remarks</div><div class="value">${remarks}</div></div>
-      </div>
-    </div>
-  `;
-
-  return `
-    <html>
-      <head>
-        <meta charSet=\"utf-8\" />
-        <title>Ticket ${details.ticketNumber}</title>
-        ${style}
-      </head>
-      <body>
-        <h1>Ticket Details</h1>
-        <div class=\"grid\">${detailsHtml}</div>
-        ${footerHtml}
-      </body>
-    </html>
-  `;
+export default function PrintPage() {
+  return (
+    <AuthGuard>
+      <PrintPageContent />
+    </AuthGuard>
+  );
 }
 
 function Detail({

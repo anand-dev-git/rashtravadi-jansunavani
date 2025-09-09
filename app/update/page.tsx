@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import AuthGuard from "@/components/auth-guard";
 
 type RegistrationDetails = {
   ticketNumber: string;
@@ -12,14 +13,16 @@ type RegistrationDetails = {
   awareOfMember: "yes" | "no";
   memberName?: string;
   memberContact?: string;
+  dbEmp?: string;
   whatsapp: string;
 };
 
-export default function UpdatePage() {
+function UpdatePageContent() {
   const [ticketInput, setTicketInput] = useState("");
   const [details, setDetails] = useState<RegistrationDetails | null>(null);
   const [status, setStatus] = useState(
-    "Under Review" as
+    "" as
+      | ""
       | "Closed"
       | "Under Review"
       | "Work in Progress"
@@ -63,10 +66,11 @@ export default function UpdatePage() {
         awareOfMember: r.memberName ? "yes" : "no",
         memberName: r.memberName ?? undefined,
         memberContact: r.memberPhone ?? undefined,
+        dbEmp: r.dbEmp ?? undefined,
         whatsapp: r.phoneNumber ?? "",
       });
       if (typeof r.status === "string") setStatus(r.status as typeof status);
-      setMember(r.memberName ?? "");
+      setMember(r.dbEmp ?? "");
       setRemarks(r.remarks ?? "");
     } catch {
       setDetails(null);
@@ -76,9 +80,43 @@ export default function UpdatePage() {
     }
   }
 
-  function handleUpdateSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleUpdateSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    // TODO: Send update for status/remarks/member
+    if (!details) return;
+
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `/api/complaint-records/${encodeURIComponent(details.ticketNumber)}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            status: status || null,
+            remarks: remarks || null,
+            dbEmp: member || null,
+            complaintSource: "Web",
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Update failed: ${response.status}`);
+      }
+
+      // Show success message or update UI
+      alert("Ticket updated successfully!");
+
+      // Optionally refresh the data
+      // You could re-fetch the ticket details here if needed
+    } catch (error) {
+      console.error("Update error:", error);
+      alert("Failed to update ticket. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -136,7 +174,7 @@ export default function UpdatePage() {
                       ) : null}
                     </>
                   ) : null}
-                  <Detail label="Whatsapp" value={details.whatsapp} />
+                  <Detail label="Contact number" value={details.whatsapp} />
                 </div>
               </div>
 
@@ -158,12 +196,15 @@ export default function UpdatePage() {
                       }
                       className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     >
-                      <option>Closed</option>
-                      <option>Under Review</option>
-                      <option>Work in Progress</option>
-                      <option>Rejected</option>
-                      <option>Wrong Department</option>
-                      <option>Problem Solved</option>
+                      <option value="" disabled>
+                        Select status
+                      </option>
+                      <option value="Closed">Closed</option>
+                      <option value="Under Review">Under Review</option>
+                      <option value="Work in Progress">Work in Progress</option>
+                      <option value="Rejected">Rejected</option>
+                      <option value="Wrong Department">Wrong Department</option>
+                      <option value="Problem Solved">Problem Solved</option>
                     </select>
                   </div>
                   <div>
@@ -171,7 +212,7 @@ export default function UpdatePage() {
                       htmlFor="member"
                       className="block text-sm font-medium text-gray-700"
                     >
-                      Member
+                      DB Employee Name
                     </label>
                     <input
                       id="member"
@@ -202,9 +243,10 @@ export default function UpdatePage() {
                 <div>
                   <button
                     type="submit"
-                    className="inline-flex items-center rounded-md bg-pink-600 px-4 py-2 text-white text-sm font-medium hover:bg-pink-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    disabled={loading}
+                    className="inline-flex items-center rounded-md bg-pink-600 px-4 py-2 text-white text-sm font-medium hover:bg-pink-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    Update
+                    {loading ? "Updating..." : "Update"}
                   </button>
                 </div>
               </form>
@@ -218,6 +260,14 @@ export default function UpdatePage() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function UpdatePage() {
+  return (
+    <AuthGuard>
+      <UpdatePageContent />
+    </AuthGuard>
   );
 }
 
