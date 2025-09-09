@@ -221,7 +221,7 @@ export async function generateTicketPDFBase64(
 
   // Load and add logo
   try {
-    const logoBase64 = await loadLogoAsBase64();
+    const logoBase64 = await loadLogoAsBase64("/logo.png");
     if (logoBase64) {
       // Add logo image
       doc.addImage(logoBase64, "PNG", 10, 5, 25, 25);
