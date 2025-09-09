@@ -34,9 +34,7 @@ export async function generateTicketPDF(
   const secondaryColor = [52, 73, 94]; // Dark gray
   const lightGray = [149, 165, 166]; // Light gray
 
-  // Header with logo and title
-  doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-  doc.rect(0, 0, 210, 35, "F");
+  // Header with logo only
 
   // Load and add logo
   try {
@@ -200,9 +198,7 @@ export async function generateTicketPDFBase64(
   const secondaryColor = [52, 73, 94]; // Dark gray
   const lightGray = [149, 165, 166]; // Light gray
 
-  // Header with logo and title
-  doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-  doc.rect(0, 0, 210, 35, "F");
+  // Header with logo only
 
   // Load and add logo
   try {
