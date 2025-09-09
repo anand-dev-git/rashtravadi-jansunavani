@@ -20,11 +20,59 @@ interface TicketData {
   dbEmployee?: string;
 }
 
+async function loadFontAsBase64(fontPath: string): Promise<string | null> {
+  try {
+    // This works in a browser/Next.js environment to fetch from the public folder
+    const response = await fetch(fontPath);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch font: ${response.statusText}`);
+    }
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // We need to strip the prefix 'data:application/octet-stream;base64,'
+        const base64String = (reader.result as string).split(",")[1];
+        resolve(base64String);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch (error) {
+    console.error("Error loading font:", error);
+    return null;
+  }
+}
+
 export async function generateTicketPDF(
   data: TicketData,
   isUpdate = false
 ): Promise<void> {
   const doc = new jsPDF();
+
+  // --- FONT HANDLING FOR MULTI-LANGUAGE SUPPORT ---
+  const FONT_NAME = "NotoSansDevanagari";
+  const FONT_FILE = "NotoSansDevanagari-Regular.ttf";
+  const FONT_PATH = `/${FONT_FILE}`; // Path in /public folder
+
+   try {
+    const fontBase64 = await loadFontAsBase64(FONT_PATH);
+    if (fontBase64) {
+      // Add the font file to the jsPDF virtual file system
+      doc.addFileToVFS(FONT_FILE, fontBase64);
+      // Add the font to be used in the document
+      doc.addFont(FONT_FILE, FONT_NAME, "normal");
+      // Set the newly added font as the active font
+      doc.setFont(FONT_NAME);
+    } else {
+      // Fallback to helvetica if the font couldn't be loaded
+      console.warn("Custom font not loaded, falling back to Helvetica. Non-English characters may not render correctly.");
+      doc.setFont("helvetica");
+    }
+  } catch (error) {
+    console.error("Failed to load or add font, falling back to Helvetica.", error);
+    doc.setFont("helvetica");
+  }
 
   // Set font
   doc.setFont("helvetica");
