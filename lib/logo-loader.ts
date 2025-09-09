@@ -1,5 +1,5 @@
 // Utility to load logo as base64 for PDF generation
-export async function loadLogoAsBase64(image): Promise<string | null> {
+export async function loadLogoAsBase64(image:string): Promise<string | null> {
   try {
     // In a browser environment, we can fetch the logo
     if (typeof window !== "undefined") {
