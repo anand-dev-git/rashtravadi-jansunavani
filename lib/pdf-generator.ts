@@ -88,7 +88,7 @@ export async function generateTicketPDF(
 
   // Ticket number in header
   doc.setFontSize(10);
-  doc.text(`Ticket: ${data.ticketNumber}`, 150, 20);
+  doc.text(`Ticket: ${data.ticketNumber}`, 45, 40);
 
   // Reset text color
   doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
