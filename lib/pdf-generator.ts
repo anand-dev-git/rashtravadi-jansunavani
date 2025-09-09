@@ -1,6 +1,10 @@
 import jsPDF from "jspdf";
 import { loadLogoAsBase64, FALLBACK_LOGO } from "./logo-loader";
 
+// --- FONT HANDLING FOR MULTI-LANGUAGE SUPPORT ---
+const FONT_NAME = "NotoSansDevanagari";
+const FONT_FILE = "NotoSansDevanagari-Regular.ttf";
+
 interface TicketData {
   ticketNumber: string;
   name: string;
@@ -50,11 +54,7 @@ export async function generateTicketPDF(
 ): Promise<void> {
   const doc = new jsPDF();
 
-  // --- FONT HANDLING FOR MULTI-LANGUAGE SUPPORT ---
-  const FONT_NAME = "NotoSansDevanagari";
-  const FONT_FILE = "NotoSansDevanagari-Regular.ttf";
   const FONT_PATH = `/${FONT_FILE}`; // Path in /public folder
-
    try {
     const fontBase64 = await loadFontAsBase64(FONT_PATH);
     if (fontBase64) {
@@ -126,7 +126,7 @@ export async function generateTicketPDF(
   // Main title
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(16);
-  doc.setFont("helvetica", "bold");
+  doc.setFont(FONT_NAME, "bold");
   doc.text("Rashtrawadi Jansunavani", 45, 15);
 
   // Subtitle
@@ -257,8 +257,28 @@ export async function generateTicketPDFBase64(
 ): Promise<string> {
   const doc = new jsPDF();
 
+  const FONT_PATH = `/${FONT_FILE}`; // Path in /public folder
+   try {
+    const fontBase64 = await loadFontAsBase64(FONT_PATH);
+    if (fontBase64) {
+      // Add the font file to the jsPDF virtual file system
+      doc.addFileToVFS(FONT_FILE, fontBase64);
+      // Add the font to be used in the document
+      doc.addFont(FONT_FILE, FONT_NAME, "normal");
+      // Set the newly added font as the active font
+      doc.setFont(FONT_NAME);
+    } else {
+      // Fallback to helvetica if the font couldn't be loaded
+      console.warn("Custom font not loaded, falling back to Helvetica. Non-English characters may not render correctly.");
+      doc.setFont("helvetica");
+    }
+  } catch (error) {
+    console.error("Failed to load or add font, falling back to Helvetica.", error);
+    doc.setFont("helvetica");
+  }
+
   // Set font
-  doc.setFont("helvetica");
+  // doc.setFont("helvetica");
 
   // Colors
   const primaryColor = [41, 128, 185]; // Blue
