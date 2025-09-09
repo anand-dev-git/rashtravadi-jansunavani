@@ -176,7 +176,7 @@ function RegisterPageContent() {
     <div className="bg-gray-50 text-gray-900">
       <section className="mx-auto max-w-3xl w-full px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10">
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 sm:p-8">
-          <h1 className="text-xl font-semibold">Create Registration</h1>
+          <h1 className="text-xl font-semibold">Register a complaint</h1>
           <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
             {/* Name */}
             <div>
