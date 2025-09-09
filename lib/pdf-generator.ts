@@ -35,7 +35,7 @@ export async function generateTicketPDF(
   const lightGray = [149, 165, 166]; // Light gray
 
   // Header with logo and title
-  doc.setFillColor(...primaryColor);
+  doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.rect(0, 0, 210, 35, "F");
 
   // Load and add logo
@@ -53,7 +53,7 @@ export async function generateTicketPDF(
     // Add logo placeholder
     doc.setFillColor(255, 255, 255);
     doc.rect(10, 5, 25, 25, "F");
-    doc.setTextColor(...primaryColor);
+    doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
     doc.setFontSize(8);
     doc.text("RJS", 18, 18);
   }
@@ -74,7 +74,7 @@ export async function generateTicketPDF(
   doc.text(`Ticket: ${data.ticketNumber}`, 150, 20);
 
   // Reset text color
-  doc.setTextColor(...secondaryColor);
+  doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
 
   // Content area - start below header
   let yPosition = 50;
@@ -125,9 +125,9 @@ export async function generateTicketPDF(
 
   // Print left column
   leftFields.forEach(([label, value]) => {
-    doc.setTextColor(...lightGray);
+    doc.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
     doc.text(label, leftColumn, yPosition);
-    doc.setTextColor(...secondaryColor);
+    doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
 
     // Handle long text wrapping with smaller max width
     const maxWidth = 70;
@@ -142,9 +142,9 @@ export async function generateTicketPDF(
 
   // Print right column
   rightFields.forEach(([label, value]) => {
-    doc.setTextColor(...lightGray);
+    doc.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
     doc.text(label, rightColumn, yPosition);
-    doc.setTextColor(...secondaryColor);
+    doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
 
     // Handle long text wrapping with smaller max width
     const maxWidth = 70;
@@ -164,9 +164,9 @@ export async function generateTicketPDF(
 
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
-    doc.setTextColor(...lightGray);
+    doc.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
     doc.text("Remarks:", 20, yPosition);
-    doc.setTextColor(...secondaryColor);
+    doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
 
     const remarksLines = doc.splitTextToSize(data.remarks, 160);
     doc.text(remarksLines, 20, yPosition + 4);
@@ -175,7 +175,7 @@ export async function generateTicketPDF(
   // Footer
   const pageHeight = doc.internal.pageSize.height;
   doc.setFontSize(8);
-  doc.setTextColor(...lightGray);
+  doc.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
   doc.text("Generated on: " + new Date().toLocaleString(), 20, pageHeight - 20);
   doc.text("Rashtrawadi Jansunavani System", 20, pageHeight - 15);
 
@@ -201,7 +201,7 @@ export async function generateTicketPDFBase64(
   const lightGray = [149, 165, 166]; // Light gray
 
   // Header with logo and title
-  doc.setFillColor(...primaryColor);
+  doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.rect(0, 0, 210, 35, "F");
 
   // Load and add logo
@@ -219,7 +219,7 @@ export async function generateTicketPDFBase64(
     // Add logo placeholder
     doc.setFillColor(255, 255, 255);
     doc.rect(10, 5, 25, 25, "F");
-    doc.setTextColor(...primaryColor);
+    doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
     doc.setFontSize(8);
     doc.text("RJS", 18, 18);
   }
@@ -240,7 +240,7 @@ export async function generateTicketPDFBase64(
   doc.text(`Ticket: ${data.ticketNumber}`, 150, 20);
 
   // Reset text color
-  doc.setTextColor(...secondaryColor);
+  doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
 
   // Content area - start below header
   let yPosition = 50;
@@ -291,9 +291,9 @@ export async function generateTicketPDFBase64(
 
   // Print left column
   leftFields.forEach(([label, value]) => {
-    doc.setTextColor(...lightGray);
+    doc.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
     doc.text(label, leftColumn, yPosition);
-    doc.setTextColor(...secondaryColor);
+    doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
 
     // Handle long text wrapping with smaller max width
     const maxWidth = 70;
@@ -308,9 +308,9 @@ export async function generateTicketPDFBase64(
 
   // Print right column
   rightFields.forEach(([label, value]) => {
-    doc.setTextColor(...lightGray);
+    doc.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
     doc.text(label, rightColumn, yPosition);
-    doc.setTextColor(...secondaryColor);
+    doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
 
     // Handle long text wrapping with smaller max width
     const maxWidth = 70;
@@ -330,9 +330,9 @@ export async function generateTicketPDFBase64(
 
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
-    doc.setTextColor(...lightGray);
+    doc.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
     doc.text("Remarks:", 20, yPosition);
-    doc.setTextColor(...secondaryColor);
+    doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
 
     const remarksLines = doc.splitTextToSize(data.remarks, 160);
     doc.text(remarksLines, 20, yPosition + 4);
@@ -341,7 +341,7 @@ export async function generateTicketPDFBase64(
   // Footer
   const pageHeight = doc.internal.pageSize.height;
   doc.setFontSize(8);
-  doc.setTextColor(...lightGray);
+  doc.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
   doc.text("Generated on: " + new Date().toLocaleString(), 20, pageHeight - 20);
   doc.text("Rashtrawadi Jansunavani System", 20, pageHeight - 15);
 
