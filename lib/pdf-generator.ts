@@ -75,7 +75,7 @@ export async function generateTicketPDF(
   }
 
   // Set font
-  doc.setFont("helvetica");
+  // doc.setFont("helvetica");
 
   // Colors
   const primaryColor = [41, 128, 185]; // Blue
@@ -131,7 +131,7 @@ export async function generateTicketPDF(
 
   // Subtitle
   doc.setFontSize(12);
-  doc.setFont("helvetica", "normal");
+  doc.setFont(FONT_NAME, "normal");
   doc.text(isUpdate ? "Ticket Details" : "Registration Details", 45, 22);
 
   // Ticket number in header
@@ -146,12 +146,12 @@ export async function generateTicketPDF(
 
   // Basic Information Section
   doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
+  doc.setFont(FONT_NAME, "bold");
   doc.text("Basic Information", 20, yPosition);
   yPosition += 8;
 
   doc.setFontSize(9);
-  doc.setFont("helvetica", "normal");
+  doc.setFont(FONT_NAME, "normal");
 
   // Create two columns
   const leftColumn = 20;
@@ -223,12 +223,12 @@ export async function generateTicketPDF(
   if (isUpdate && data.remarks) {
     yPosition = Math.max(yPosition, 120);
     doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
+    doc.setFont(FONT_NAME, "bold");
     doc.text("Remarks", 20, yPosition);
     yPosition += 8;
 
     doc.setFontSize(9);
-    doc.setFont("helvetica", "normal");
+    doc.setFont(FONT_NAME, "normal");
     doc.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
     doc.text("Remarks:", 20, yPosition);
     doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
@@ -290,12 +290,12 @@ export async function generateTicketPDFBase64(
   // Main title
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(16);
-  doc.setFont("helvetica", "bold");
+  doc.setFont(FONT_NAME, "bold");
   doc.text("Rashtrawadi Jansunavani", 45, 15);
 
   // Subtitle
   doc.setFontSize(12);
-  doc.setFont("helvetica", "normal");
+  doc.setFont(FONT_NAME, "normal");
   doc.text(isUpdate ? "Ticket Details" : "Registration Details", 45, 22);
 
   // Ticket number in header
@@ -310,12 +310,12 @@ export async function generateTicketPDFBase64(
 
   // Basic Information Section
   doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
+  doc.setFont(FONT_NAME, "bold");
   doc.text("Basic Information", 20, yPosition);
   yPosition += 8;
 
   doc.setFontSize(9);
-  doc.setFont("helvetica", "normal");
+  doc.setFont(FONT_NAME, "normal");
 
   // Create two columns
   const leftColumn = 20;
@@ -392,7 +392,7 @@ export async function generateTicketPDFBase64(
     yPosition += 8;
 
     doc.setFontSize(9);
-    doc.setFont("helvetica", "normal");
+    doc.setFont(FONT_NAME, "normal");
     doc.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
     doc.text("Remarks:", 20, yPosition);
     doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
