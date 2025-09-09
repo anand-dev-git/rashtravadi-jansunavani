@@ -107,19 +107,19 @@ export async function generateTicketPDF(
     ["Problem:", data.problem],
     ["Status:", data.status || "Not Set"],
     ["WhatsApp:", data.whatsapp],
-    ["Aware of DB Employee:", data.awareOfMember],
+    // ["Aware of DB Employee:", data.awareOfMember],
   ];
 
   // Add member fields if applicable
   if (data.memberName) {
-    rightFields.push(["DB Employee Name:", data.memberName]);
+    rightFields.push(["Party Member Name:", data.memberName]);
   }
   if (data.memberContact) {
-    rightFields.push(["DB Employee Contact:", data.memberContact]);
+    rightFields.push(["Party Member Contact:", data.memberContact]);
   }
-  if (data.dbEmployee) {
-    rightFields.push(["DB Employee:", data.dbEmployee]);
-  }
+  // if (data.dbEmployee) {
+  //   rightFields.push(["DB Employee:", data.dbEmployee]);
+  // }
 
   // Print left column
   leftFields.forEach(([label, value]) => {
@@ -271,19 +271,19 @@ export async function generateTicketPDFBase64(
     ["Problem:", data.problem],
     ["Status:", data.status || "Not Set"],
     ["WhatsApp:", data.whatsapp],
-    ["Aware of DB Employee:", data.awareOfMember],
+    // ["Aware of DB Employee:", data.awareOfMember],
   ];
 
   // Add member fields if applicable
   if (data.memberName) {
-    rightFields.push(["DB Employee Name:", data.memberName]);
+    rightFields.push(["Party Member Name:", data.memberName]);
   }
   if (data.memberContact) {
-    rightFields.push(["DB Employee Contact:", data.memberContact]);
+    rightFields.push(["Party Member Contact:", data.memberContact]);
   }
-  if (data.dbEmployee) {
-    rightFields.push(["DB Employee:", data.dbEmployee]);
-  }
+  // if (data.dbEmployee) {
+  //   rightFields.push(["DB Employee:", data.dbEmployee]);
+  // }
 
   // Print left column
   leftFields.forEach(([label, value]) => {
@@ -490,19 +490,19 @@ export function generatePrintableHTML(
     { label: "Problem", value: data.problem, fullWidth: true },
     { label: "Status", value: data.status || "Not Set" },
     { label: "WhatsApp", value: data.whatsapp },
-    { label: "Aware of DB Employee", value: data.awareOfMember },
+    // { label: "Aware of DB Employee", value: data.awareOfMember },
   ];
 
   // Add member fields if applicable
   if (data.memberName) {
-    fields.push({ label: "DB Employee Name", value: data.memberName });
+    fields.push({ label: "Party Member Name", value: data.memberName });
   }
   if (data.memberContact) {
-    fields.push({ label: "DB Employee Contact", value: data.memberContact });
+    fields.push({ label: "Party Member Contact", value: data.memberContact });
   }
-  if (data.dbEmployee) {
-    fields.push({ label: "DB Employee", value: data.dbEmployee });
-  }
+  // if (data.dbEmployee) {
+  //   fields.push({ label: "DB Employee", value: data.dbEmployee });
+  // }
 
   const fieldsHtml = fields
     .map(
