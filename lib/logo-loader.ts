@@ -1,9 +1,9 @@
 // Utility to load logo as base64 for PDF generation
-export async function loadLogoAsBase64(): Promise<string | null> {
+export async function loadLogoAsBase64(image): Promise<string | null> {
   try {
     // In a browser environment, we can fetch the logo
     if (typeof window !== "undefined") {
-      const response = await fetch("/logo_ticket_1.png");
+      const response = await fetch(image);
       if (!response.ok) {
         console.warn("Logo not found, using placeholder");
         return null;
