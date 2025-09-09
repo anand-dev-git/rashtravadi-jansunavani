@@ -38,7 +38,26 @@ export async function generateTicketPDF(
 
   // Load and add logo
   try {
-    const logoBase64 = await loadLogoAsBase64();
+    const logoBase64 = await loadLogoAsBase64("/logo_ticket_1.png");
+    if (logoBase64) {
+      // Add logo image
+      doc.addImage(logoBase64, "PNG", 10, 5, 25, 25);
+    } else {
+      // Fallback to simple logo
+      doc.addImage(FALLBACK_LOGO, "PNG", 10, 5, 25, 25);
+    }
+  } catch (error) {
+    console.log("Logo not available, using text placeholder");
+    // Add logo placeholder
+    doc.setFillColor(255, 255, 255);
+    doc.rect(10, 5, 25, 25, "F");
+    doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    doc.setFontSize(8);
+    doc.text("RJS", 18, 18);
+  }
+
+   try {
+    const logoBase64 = await loadLogoAsBase64("/logo_ticket_2.png");
     if (logoBase64) {
       // Add logo image
       doc.addImage(logoBase64, "PNG", 10, 5, 25, 25);
