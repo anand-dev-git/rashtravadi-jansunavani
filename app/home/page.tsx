@@ -25,7 +25,7 @@ export default function HomePage() {
             className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <div className="flex items-start justify-between">
-              <h3 className="text-lg font-semibold">Register</h3>
+              <h3 className="text-lg font-semibold">New Registration</h3>
             </div>
             <p className="mt-2 text-sm text-gray-600">
               Add a new entry and capture required details.
@@ -53,7 +53,7 @@ export default function HomePage() {
             className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <div className="flex items-start justify-between">
-              <h3 className="text-lg font-semibold">Update</h3>
+              <h3 className="text-lg font-semibold">Update Status</h3>
             </div>
             <p className="mt-2 text-sm text-gray-600">
               Modify existing records and keep information current.
@@ -81,7 +81,7 @@ export default function HomePage() {
             className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <div className="flex items-start justify-between">
-              <h3 className="text-lg font-semibold">Print</h3>
+              <h3 className="text-lg font-semibold">Re-Print</h3>
             </div>
             <p className="mt-2 text-sm text-gray-600">
               Generate and print output for records.
