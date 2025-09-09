@@ -1,21 +1,47 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSubmitting(true);
     setError(null);
+
     try {
-      // TODO: Wire this up to your auth API or Next.js action
-      await new Promise((resolve) => setTimeout(resolve, 600));
-      // Redirect or set auth state here
-      // router.push("/home");
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Store token in localStorage
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        // Set cookie for server-side authentication
+        document.cookie = `token=${data.token}; path=/; max-age=86400`;
+
+        // Redirect to home page with a small delay to ensure cookie is set
+        setTimeout(() => {
+          // Use window.location.href to ensure a full page refresh
+          // This will trigger the header to re-read the localStorage
+          window.location.href = "/";
+        }, 100);
+      } else {
+        setError(data.error || "Login failed. Please try again.");
+      }
     } catch (e) {
       setError("Login failed. Please try again.");
     } finally {
