@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
+import { getEnglishProblem } from "@/lib/translation-dictionary";
 
 export async function GET(request: NextRequest) {
   try {
@@ -82,7 +83,10 @@ export async function GET(request: NextRequest) {
 
     const departmentCounts: { [key: string]: number } = {};
     deptResult.forEach((row) => {
-      departmentCounts[row.problem] = row.count;
+      // Convert problem to English version using translation dictionary
+      const englishProblem = getEnglishProblem(row.problem);
+      departmentCounts[englishProblem] =
+        (departmentCounts[englishProblem] || 0) + row.count;
     });
 
     // Get additional statistics
