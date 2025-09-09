@@ -60,10 +60,10 @@ export async function generateTicketPDF(
     const logoBase64 = await loadLogoAsBase64("/logo_ticket_2.png");
     if (logoBase64) {
       // Add logo image
-      doc.addImage(logoBase64, "PNG", 10, 5, 25, 25);
+      doc.addImage(logoBase64, "PNG", 200, 5, 25, 25);
     } else {
       // Fallback to simple logo
-      doc.addImage(FALLBACK_LOGO, "PNG", 10, 5, 25, 25);
+      doc.addImage(FALLBACK_LOGO, "PNG", 200, 5, 25, 25);
     }
   } catch (error) {
     console.log("Logo not available, using text placeholder");
