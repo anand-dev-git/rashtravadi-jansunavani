@@ -22,26 +22,149 @@ function DashboardContent() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [dateRange, setDateRange] = useState<{
+    startDate: string;
+    endDate: string;
+  } | null>(null);
+  const [showCustomDatePicker, setShowCustomDatePicker] = useState(false);
+  const [customStartDate, setCustomStartDate] = useState("");
+  const [customEndDate, setCustomEndDate] = useState("");
 
   useEffect(() => {
     fetchDashboardStats();
-  }, []);
+  }, [dateRange]);
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && showCustomDatePicker) {
+        handleCustomDateCancel();
+      }
+    };
+
+    if (showCustomDatePicker) {
+      document.addEventListener("keydown", handleEscape);
+      return () => document.removeEventListener("keydown", handleEscape);
+    }
+  }, [showCustomDatePicker]);
 
   const fetchDashboardStats = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/dashboard/stats");
+      setError(null); // Clear any previous errors
+      let url = "/api/dashboard/stats";
+
+      if (dateRange) {
+        const params = new URLSearchParams({
+          startDate: dateRange.startDate,
+          endDate: dateRange.endDate,
+        });
+        url += `?${params.toString()}`;
+      }
+
+      console.log("Fetching dashboard stats from:", url);
+      const response = await fetch(url);
 
       if (!response.ok) {
-        throw new Error("Failed to fetch dashboard stats");
+        const errorText = await response.text();
+        console.error("Dashboard API error:", response.status, errorText);
+        throw new Error(
+          `Failed to fetch dashboard stats: ${response.status} ${response.statusText}`
+        );
       }
 
       const data = await response.json();
+      console.log("Dashboard stats received:", data);
       setStats(data);
     } catch (err) {
+      console.error("Dashboard fetch error:", err);
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDateRangeFilter = (days: number | null) => {
+    if (days === null) {
+      // Show all data
+      setDateRange(null);
+    } else {
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(endDate.getDate() - days);
+
+      setDateRange({
+        startDate: startDate.toISOString().split("T")[0],
+        endDate: endDate.toISOString().split("T")[0],
+      });
+    }
+  };
+
+  const getDateRangeLabel = () => {
+    if (!dateRange) return "All Time";
+    const start = new Date(dateRange.startDate).toLocaleDateString();
+    const end = new Date(dateRange.endDate).toLocaleDateString();
+    return `${start} - ${end}`;
+  };
+
+  const isCustomDateRange = () => {
+    if (!dateRange) return false;
+    const today = new Date().toISOString().split("T")[0];
+    const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .split("T")[0];
+    const fiveDaysAgo = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .split("T")[0];
+
+    return (
+      dateRange.startDate !== today &&
+      dateRange.startDate !== twoDaysAgo &&
+      dateRange.startDate !== fiveDaysAgo
+    );
+  };
+
+  const handleCustomDateSubmit = () => {
+    if (customStartDate && customEndDate) {
+      // Validate that start date is not after end date
+      if (new Date(customStartDate) > new Date(customEndDate)) {
+        alert("Start date cannot be after end date");
+        return;
+      }
+
+      // Validate that dates are not in the future
+      const today = new Date().toISOString().split("T")[0];
+      if (customStartDate > today || customEndDate > today) {
+        alert("Dates cannot be in the future");
+        return;
+      }
+
+      setDateRange({
+        startDate: customStartDate,
+        endDate: customEndDate,
+      });
+      setShowCustomDatePicker(false);
+    }
+  };
+
+  const handleCustomDateCancel = () => {
+    setShowCustomDatePicker(false);
+    setCustomStartDate("");
+    setCustomEndDate("");
+  };
+
+  const openCustomDatePicker = () => {
+    const today = new Date().toISOString().split("T")[0];
+    const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .split("T")[0];
+    setCustomStartDate(oneWeekAgo);
+    setCustomEndDate(today);
+    setShowCustomDatePicker(true);
+  };
+
+  const handleModalClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      handleCustomDateCancel();
     }
   };
 
@@ -80,12 +203,20 @@ function DashboardContent() {
         <div className="text-center">
           <div className="text-red-500 text-lg font-medium">Error</div>
           <p className="mt-2 text-sm text-gray-600">{error}</p>
-          <button
-            onClick={fetchDashboardStats}
-            className="mt-4 px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700"
-          >
-            Retry
-          </button>
+          <div className="mt-4 space-x-2">
+            <button
+              onClick={fetchDashboardStats}
+              className="px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700"
+            >
+              Retry
+            </button>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+            >
+              Reload Page
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -95,11 +226,154 @@ function DashboardContent() {
     <div className="bg-gray-50 text-gray-900">
       <section className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Overview of ticket statistics and age group distribution
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+              <p className="mt-2 text-sm text-gray-600">
+                Overview of ticket statistics and age group distribution
+              </p>
+            </div>
+
+            {/* Date Range Selector */}
+            <div className="mt-4 sm:mt-0">
+              <div className="flex flex-col sm:flex-row gap-2">
+                <div className="text-sm text-gray-600 mb-2 sm:mb-0 sm:mr-4 sm:flex sm:items-center">
+                  <span className="font-medium">
+                    Period: {getDateRangeLabel()}
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleDateRangeFilter(null)}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                      !dateRange
+                        ? "bg-pink-600 text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  >
+                    All Time
+                  </button>
+                  <button
+                    onClick={() => handleDateRangeFilter(0)}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                      dateRange &&
+                      new Date(dateRange.startDate).toDateString() ===
+                        new Date().toDateString()
+                        ? "bg-pink-600 text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  >
+                    Today
+                  </button>
+                  <button
+                    onClick={() => handleDateRangeFilter(2)}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                      dateRange &&
+                      new Date(dateRange.startDate).toDateString() ===
+                        new Date(
+                          Date.now() - 2 * 24 * 60 * 60 * 1000
+                        ).toDateString()
+                        ? "bg-pink-600 text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  >
+                    2 Days
+                  </button>
+                  <button
+                    onClick={() => handleDateRangeFilter(5)}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                      dateRange &&
+                      new Date(dateRange.startDate).toDateString() ===
+                        new Date(
+                          Date.now() - 5 * 24 * 60 * 60 * 1000
+                        ).toDateString()
+                        ? "bg-pink-600 text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  >
+                    5 Days
+                  </button>
+                  <button
+                    onClick={openCustomDatePicker}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors flex items-center gap-1 ${
+                      isCustomDateRange()
+                        ? "bg-pink-600 text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  >
+                    <svg
+                      className="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    Custom Range
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+
+        {/* Custom Date Picker Modal */}
+        {showCustomDatePicker && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={handleModalClick}
+          >
+            <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Select Custom Date Range
+              </h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Start Date
+                  </label>
+                  <input
+                    type="date"
+                    value={customStartDate}
+                    onChange={(e) => setCustomStartDate(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    End Date
+                  </label>
+                  <input
+                    type="date"
+                    value={customEndDate}
+                    onChange={(e) => setCustomEndDate(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end space-x-3 mt-6">
+                <button
+                  onClick={handleCustomDateCancel}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCustomDateSubmit}
+                  disabled={!customStartDate || !customEndDate}
+                  className="px-4 py-2 text-sm font-medium text-white bg-pink-600 rounded-md hover:bg-pink-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Apply
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Summary Cards */}
         <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
