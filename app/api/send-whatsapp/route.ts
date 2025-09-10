@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendRegistrationWhatsApp } from "@/lib/twilio";
+import { sendRegistrationWhatsApp } from "@/lib/whatstool";
 import { generateTicketPDFBase64 } from "@/lib/pdf-generator";
 
 export async function POST(request: NextRequest) {
@@ -17,20 +17,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if Twilio is configured
-    if (
-      !process.env.TWILIO_ACCOUNT_SID ||
-      !process.env.TWILIO_AUTH_TOKEN ||
-      !process.env.TWILIO_WHATSAPP_NUMBER
-    ) {
-      return NextResponse.json(
-        {
-          error:
-            "Twilio not configured. Please set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_WHATSAPP_NUMBER environment variables.",
-        },
-        { status: 500 }
-      );
-    }
+    // Check if WhatsTool is configured (API key is hardcoded in the service)
+    // No need to check environment variable as it's handled in the service
 
     // Generate PDF as base64
     const pdfBase64 = await generateTicketPDFBase64(ticketData, false);
