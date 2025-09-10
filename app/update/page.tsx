@@ -23,7 +23,6 @@ function UpdatePageContent() {
   const [status, setStatus] = useState(
     "" as
       | ""
-      | "Closed"
       | "Under Review"
       | "Work in Progress"
       | "Rejected"
@@ -199,7 +198,6 @@ function UpdatePageContent() {
                       <option value="" disabled>
                         Select status
                       </option>
-                      <option value="Closed">Closed</option>
                       <option value="Under Review">Under Review</option>
                       <option value="Work in Progress">Work in Progress</option>
                       <option value="Rejected">Rejected</option>
