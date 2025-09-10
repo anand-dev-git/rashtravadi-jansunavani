@@ -150,12 +150,6 @@ export const PROBLEM_TRANSLATIONS: ProblemTranslation[] = [
     category: "waste",
   },
   {
-    english: "Building Permission",
-    hindi: "भवन परवानगी",
-    marathi: "भवन परवानगी",
-    category: "building",
-  },
-  {
     english: "Street Light",
     hindi: "स्ट्रीट लाइट",
     marathi: "रस्ता प्रकाश",
@@ -217,12 +211,6 @@ export const PROBLEM_TRANSLATIONS: ProblemTranslation[] = [
     category: "cooperative",
   },
   {
-    english: "Cooperative Society Department",
-    hindi: "सहकारी समिति विभाग",
-    marathi: "सहकारी समिती विभाग",
-    category: "cooperative",
-  },
-  {
     english: "Building Permission Dept.",
     hindi: "भवन परवानगी विभाग",
     marathi: "भवन परवानगी विभाग",
@@ -253,12 +241,6 @@ export const PROBLEM_TRANSLATIONS: ProblemTranslation[] = [
     category: "revenue",
   },
   {
-    english: "City Survey Officer",
-    hindi: "शहर सर्वेक्षण अधिकारी",
-    marathi: "शहर सर्वेक्षण अधिकारी",
-    category: "survey",
-  },
-  {
     english: "Stamp & Reg. Dept.",
     hindi: "मुहर व नोंदणी विभाग",
     marathi: "नोंदणी व मुद्रांक विभाग",
@@ -287,24 +269,6 @@ export const PROBLEM_TRANSLATIONS: ProblemTranslation[] = [
     hindi: "आरटीओ परिवहन विभाग",
     marathi: "आरटीओ परिवहन विभाग",
     category: "transport",
-  },
-  {
-    english: "PMPL",
-    hindi: "पीएमपीएल",
-    marathi: "पीएमपीएमएल",
-    category: "pmpl",
-  },
-  {
-    english: "Social Welfare",
-    hindi: "सामाजिक कल्याण",
-    marathi: "सामाजिक न्याय विभाग",
-    category: "welfare",
-  },
-  {
-    english: "MHADA",
-    hindi: "म्हाडा",
-    marathi: "म्हाडा",
-    category: "mhada",
   },
 ];
 
