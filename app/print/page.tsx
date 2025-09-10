@@ -26,7 +26,6 @@ function PrintPageContent() {
   const [details, setDetails] = useState<RegistrationDetails | null>(null);
   const [status, setStatus] = useState(
     "Under Review" as
-      | "Closed"
       | "Under Review"
       | "Work in Progress"
       | "Rejected"
