@@ -46,7 +46,7 @@ function DashboardContent() {
   };
 
   const statusCategories = [
-    { name: "Closed", color: "bg-gray-500" },
+    // { name: "Closed", color: "bg-gray-500" },
     { name: "Under Review", color: "bg-blue-500" },
     { name: "Work in Progress", color: "bg-yellow-500" },
     { name: "Rejected", color: "bg-red-500" },
