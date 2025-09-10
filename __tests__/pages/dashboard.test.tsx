@@ -17,6 +17,17 @@ jest.mock("next/navigation", () => ({
   usePathname: () => "/dashboard",
 }));
 
+// Mock localStorage
+Object.defineProperty(window, "localStorage", {
+  value: {
+    getItem: jest.fn(() => "test-token"),
+    setItem: jest.fn(),
+    removeItem: jest.fn(),
+    clear: jest.fn(),
+  },
+  writable: true,
+});
+
 describe("Dashboard Page", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -119,6 +130,21 @@ describe("Dashboard Page", () => {
     render(<DashboardPage />);
 
     expect(screen.getByText("Loading dashboard...")).toBeInTheDocument();
+  });
+
+  it("renders date range filter buttons", () => {
+    render(<DashboardPage />);
+
+    expect(screen.getByText("All Time")).toBeInTheDocument();
+    expect(screen.getByText("Today")).toBeInTheDocument();
+    expect(screen.getByText("2 Days")).toBeInTheDocument();
+    expect(screen.getByText("5 Days")).toBeInTheDocument();
+  });
+
+  it("shows current period label", () => {
+    render(<DashboardPage />);
+
+    expect(screen.getByText(/Period:/)).toBeInTheDocument();
   });
 
   it("handles API errors gracefully", async () => {

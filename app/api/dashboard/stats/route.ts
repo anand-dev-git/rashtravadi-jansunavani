@@ -7,13 +7,24 @@ export async function GET(request: NextRequest) {
     // Get user from headers (set by middleware if available)
     const username = request.headers.get("x-username");
 
+    // Get date range parameters from query string
+    const { searchParams } = new URL(request.url);
+    const startDate = searchParams.get("startDate");
+    const endDate = searchParams.get("endDate");
+
     // For now, we'll use dbuser01 as specified in the requirements
     // In a real application, you'd validate the user and their permissions
     const targetUsername = "dbuser01";
 
+    // Build date filter condition
+    let dateFilter = "";
+    if (startDate && endDate) {
+      dateFilter = ` WHERE createdDate >= '${startDate}' AND createdDate <= '${endDate} 23:59:59'`;
+    }
+
     // Get total tickets count
     const [totalResult] = await query<{ count: number }>(
-      "SELECT COUNT(*) as count FROM complaint_records"
+      `SELECT COUNT(*) as count FROM complaint_records ${dateFilter}`
     );
     const totalTickets = totalResult[0]?.count || 0;
 
@@ -23,6 +34,7 @@ export async function GET(request: NextRequest) {
         COALESCE(status, 'No Status') as status, 
         COUNT(*) as count 
        FROM complaint_records 
+       ${dateFilter}
        GROUP BY status 
        ORDER BY count DESC`
     );
@@ -38,6 +50,7 @@ export async function GET(request: NextRequest) {
         COALESCE(age, 'No Age') as age, 
         COUNT(*) as count 
        FROM complaint_records 
+       ${dateFilter}
        GROUP BY age 
        ORDER BY count DESC`
     );
@@ -77,6 +90,7 @@ export async function GET(request: NextRequest) {
         COALESCE(problem, 'No Department') as problem, 
         COUNT(*) as count 
        FROM complaint_records 
+       ${dateFilter}
        GROUP BY problem 
        ORDER BY count DESC`
     );
@@ -93,13 +107,17 @@ export async function GET(request: NextRequest) {
     const [recentTickets] = await query<{ count: number }>(
       `SELECT COUNT(*) as count 
        FROM complaint_records 
-       WHERE createdDate >= DATE_SUB(NOW(), INTERVAL 7 DAY)`
+       ${
+         dateFilter ? `${dateFilter} AND` : "WHERE"
+       } createdDate >= DATE_SUB(NOW(), INTERVAL 7 DAY)`
     );
 
     const [resolvedTickets] = await query<{ count: number }>(
       `SELECT COUNT(*) as count 
        FROM complaint_records 
-       WHERE status IN ('Problem Solved', 'Closed')`
+       ${
+         dateFilter ? `${dateFilter} AND` : "WHERE"
+       } status IN ('Problem Solved', 'Closed')`
     );
 
     const stats = {

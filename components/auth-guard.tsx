@@ -13,25 +13,41 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 
   useEffect(() => {
     // Check if user is authenticated
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-
-    if (token && user) {
+    const checkAuth = () => {
       try {
-        // Verify token is valid JSON
-        JSON.parse(user);
-        setIsAuthenticated(true);
-      } catch (error) {
-        console.error("Invalid user data:", error);
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        router.push("/login");
-      }
-    } else {
-      router.push("/login");
-    }
+        const token = localStorage.getItem("token");
+        const user = localStorage.getItem("user");
 
-    setIsLoading(false);
+        if (token && user) {
+          try {
+            // Verify token is valid JSON
+            JSON.parse(user);
+            setIsAuthenticated(true);
+          } catch (error) {
+            console.error("Invalid user data:", error);
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            router.push("/login");
+            return;
+          }
+        } else {
+          console.log("No token or user found, redirecting to login");
+          router.push("/login");
+          return;
+        }
+      } catch (error) {
+        console.error("Error checking authentication:", error);
+        router.push("/login");
+        return;
+      }
+
+      setIsLoading(false);
+    };
+
+    // Add a small delay to ensure localStorage is available
+    const timeoutId = setTimeout(checkAuth, 100);
+
+    return () => clearTimeout(timeoutId);
   }, [router]);
 
   if (isLoading) {
