@@ -7,9 +7,9 @@ export default function HomePage() {
         {/* App title centered with logo space */}
         <div className="pt-12 sm:pt-16">
           <div className="mx-auto flex flex-col items-center text-center">
-            <Logo width={128} height={128} />
+            <Logo width={150} height={150} />
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
-              Rashtrawadi Jansunavani
+              JanSamwad
             </h1>
             <p className="mt-2 text-sm text-gray-600 max-w-prose">
               Please choose an action to continue
