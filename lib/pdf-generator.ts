@@ -20,9 +20,9 @@ interface TicketData {
   memberContact?: string;
   whatsapp: string;
   createdDate: string;
-  remarks?: string;
-  dbEmployee?: string;
   problem_des: string;
+  remarks?: string;
+  // dbEmployee?: string;
 }
 
 async function loadFontAsBase64(fontPath: string): Promise<string | null> {
