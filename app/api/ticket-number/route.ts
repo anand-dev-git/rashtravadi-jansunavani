@@ -21,10 +21,11 @@ export async function GET() {
       const match = ticket.match(/^JD(\d{6})AP$/);
       if (match) {
         const ticketNumber = parseInt(match[1], 10);
-        // Only consider reasonable numbers (less than 1000 to avoid garbage data)
-        if (ticketNumber > 0 && ticketNumber < 1000) {
-          nextNumber = ticketNumber + 1;
-          break; // Found the highest valid ticket, use it
+        // Only consider reasonable numbers (less than 100000 to avoid garbage data)
+        if (ticketNumber > 0 && ticketNumber < 100000) {
+          if (ticketNumber >= nextNumber) {
+            nextNumber = ticketNumber + 1;
+          }
         }
       }
     }
