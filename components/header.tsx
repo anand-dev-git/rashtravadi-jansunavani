@@ -89,9 +89,9 @@ export default function Navbar() {
       <nav className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
           {/* Logo placeholder */}
-          <Logo width={64} height={64} />
+          <Logo width={96} height={72} />
           <span className="font-semibold tracking-tight text-white">
-            Rashtrawadi Jansunavani
+            JanSamwad
           </span>
         </div>
         <div className="flex items-center gap-3">
