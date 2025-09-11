@@ -131,7 +131,7 @@ export const PROBLEM_TRANSLATIONS: ProblemTranslation[] = [
     category: "land",
   },
   {
-    english: "Roads and Traffic",
+    english: "Road and Traffic",
     hindi: "सड़क व ट्रैफिक",
     marathi: "रस्ते व वाहतूक",
     category: "transport",
