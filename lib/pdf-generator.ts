@@ -578,9 +578,9 @@ export function generatePrintableHTML(
     { label: "Gender", value: data.gender },
     ...(data.age ? [{ label: "Age", value: data.age }] : []),
     { label: "Problem", value: data.problem, fullWidth: true },
-    { label: "Problem Description", value: data.problem_des, fullWidth: true },
     { label: "Status", value: data.status || "Not Set" },
     { label: "WhatsApp", value: data.whatsapp },
+    { label: "Problem Description", value: data.problem_des, fullWidth: true },
     // { label: "Aware of DB Employee", value: data.awareOfMember },
   ];
 
