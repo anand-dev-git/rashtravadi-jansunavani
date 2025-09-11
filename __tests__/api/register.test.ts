@@ -17,6 +17,22 @@ jest.mock("@/lib/db", () => ({
 
 const { query } = require("@/lib/db");
 
+// Mock NextRequest
+jest.mock("next/server", () => ({
+  NextRequest: class MockNextRequest {
+    constructor(public url: string, public init?: RequestInit) {}
+    async json() {
+      return JSON.parse((this.init?.body as string) || "{}");
+    }
+  },
+  NextResponse: {
+    json: (data: any, init?: any) => ({
+      json: () => Promise.resolve(data),
+      status: init?.status || 200,
+    }),
+  },
+}));
+
 describe("/api/register", () => {
   beforeEach(() => {
     jest.clearAllMocks();

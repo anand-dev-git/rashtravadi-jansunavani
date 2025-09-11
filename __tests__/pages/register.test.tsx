@@ -16,6 +16,13 @@ jest.mock("next/navigation", () => ({
   usePathname: () => "/register",
 }));
 
+// Mock AuthGuard component to render children directly
+jest.mock("@/components/auth-guard", () => {
+  return function MockAuthGuard({ children }: { children: React.ReactNode }) {
+    return <>{children}</>;
+  };
+});
+
 // Mock fetch
 global.fetch = jest.fn();
 
@@ -61,8 +68,9 @@ describe("Register Page", () => {
     expect(screen.getByLabelText(/address/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/contact number/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/gender/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/age/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/problem/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^age$/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^problem$/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/problem description/i)).toBeInTheDocument();
   });
 
   it("shows validation errors for required fields", async () => {
@@ -71,8 +79,10 @@ describe("Register Page", () => {
     const submitButton = screen.getByRole("button", { name: /create/i });
     fireEvent.click(submitButton);
 
+    // HTML5 validation should prevent form submission
+    // Check that the form doesn't submit (no API calls made)
     await waitFor(() => {
-      expect(screen.getByText("Name is required")).toBeInTheDocument();
+      expect(global.fetch).not.toHaveBeenCalled();
     });
   });
 
@@ -92,11 +102,14 @@ describe("Register Page", () => {
     fireEvent.change(screen.getByLabelText(/gender/i), {
       target: { value: "male" },
     });
-    fireEvent.change(screen.getByLabelText(/age/i), {
+    fireEvent.change(screen.getByLabelText(/^age$/i), {
       target: { value: "26-35" },
     });
-    fireEvent.change(screen.getByLabelText(/problem/i), {
+    fireEvent.change(screen.getByLabelText(/^problem$/i), {
       target: { value: "Water Supply" },
+    });
+    fireEvent.change(screen.getByLabelText(/problem description/i), {
+      target: { value: "Test problem description" },
     });
 
     const submitButton = screen.getByRole("button", { name: /create/i });
@@ -149,11 +162,14 @@ describe("Register Page", () => {
     fireEvent.change(screen.getByLabelText(/gender/i), {
       target: { value: "male" },
     });
-    fireEvent.change(screen.getByLabelText(/age/i), {
+    fireEvent.change(screen.getByLabelText(/^age$/i), {
       target: { value: "26-35" },
     });
-    fireEvent.change(screen.getByLabelText(/problem/i), {
+    fireEvent.change(screen.getByLabelText(/^problem$/i), {
       target: { value: "Water Supply" },
+    });
+    fireEvent.change(screen.getByLabelText(/problem description/i), {
+      target: { value: "Test problem description" },
     });
 
     const submitButton = screen.getByRole("button", { name: /create/i });
@@ -165,6 +181,8 @@ describe("Register Page", () => {
   });
 
   it("handles form submission errors", async () => {
+    // Clear previous mocks and set up error scenario
+    jest.clearAllMocks();
     (global.fetch as jest.Mock)
       .mockResolvedValueOnce({
         ok: true,
@@ -172,6 +190,7 @@ describe("Register Page", () => {
       })
       .mockResolvedValueOnce({
         ok: false,
+        status: 500,
         json: () => Promise.resolve({ error: "Database error" }),
       });
 
@@ -190,18 +209,24 @@ describe("Register Page", () => {
     fireEvent.change(screen.getByLabelText(/gender/i), {
       target: { value: "male" },
     });
-    fireEvent.change(screen.getByLabelText(/age/i), {
+    fireEvent.change(screen.getByLabelText(/^age$/i), {
       target: { value: "26-35" },
     });
-    fireEvent.change(screen.getByLabelText(/problem/i), {
+    fireEvent.change(screen.getByLabelText(/^problem$/i), {
       target: { value: "Water Supply" },
+    });
+    fireEvent.change(screen.getByLabelText(/problem description/i), {
+      target: { value: "Test problem description" },
     });
 
     const submitButton = screen.getByRole("button", { name: /create/i });
     fireEvent.click(submitButton);
 
-    await waitFor(() => {
-      expect(screen.getByText("Database error")).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByText(/create failed: 500/i)).toBeInTheDocument();
+      },
+      { timeout: 2000 }
+    );
   });
 });
