@@ -127,7 +127,7 @@ export async function generateTicketPDF(
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(16);
   doc.setFont(FONT_NAME, "bold");
-  doc.text("Rashtrawadi Jansunavani", 45, 15);
+  doc.text("JanSamwad", 45, 15);
 
   // Subtitle
   doc.setFontSize(12);
