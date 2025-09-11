@@ -548,7 +548,6 @@ function DashboardContent() {
             {stats?.departmentCounts &&
               Object.entries(stats.departmentCounts)
                 .sort(([, a], [, b]) => b - a)
-                .slice(0, 12)
                 .map(([department, count], index) => {
                   const colors = [
                     "bg-blue-500",
