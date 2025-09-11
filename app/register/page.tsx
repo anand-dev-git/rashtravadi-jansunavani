@@ -21,6 +21,7 @@ function RegisterPageContent() {
     memberPhone: "",
     phoneNumber: "",
     status: "",
+    remarks: "",
     complaintSource: "Web",
     problem_des: "",
   });
