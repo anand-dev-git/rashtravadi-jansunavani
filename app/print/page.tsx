@@ -97,6 +97,7 @@ function PrintPageContent() {
       language: details.language,
       gender: details.gender,
       problem: details.problem,
+      problem_des: details.problem, // Use problem as problem_des since they're the same
       status: status,
       awareOfMember: details.awareOfMember,
       memberName: details.memberName,
@@ -176,7 +177,7 @@ function PrintPageContent() {
                   ) : null}
                   <Detail label="Whatsapp" value={details.whatsapp} />
                   <Detail label="Status" value={details.status} />
-{/*                   <Detail label="DB Employee Name" value={details.member} /> */}
+                  {/*                   <Detail label="DB Employee Name" value={details.member} /> */}
                   <Detail label="Remarks" value={details.remarks} />
                 </div>
               </div>
