@@ -32,6 +32,7 @@ export async function POST(request: Request) {
     "remarks",
     "memberPhone",
     "complaintSource",
+    "problem_des",
   ] as const;
 
   const values = fields.map((f) => body[f as (typeof fields)[number]] ?? null);
