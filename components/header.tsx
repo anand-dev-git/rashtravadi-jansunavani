@@ -89,7 +89,7 @@ export default function Navbar() {
       <nav className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
           {/* Logo placeholder */}
-          <Logo width={96} height={72} />
+          <Logo width={104} height={84} />
           <span className="font-semibold tracking-tight text-white">
             JanSamwad
           </span>
