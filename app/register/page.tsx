@@ -96,13 +96,13 @@ function RegisterPageContent() {
         gender: formData.gender,
         age: formData.age,
         problem: normalizeProblemForStorage(formData.problem),
-        problem_des: formData.problem_des,
         status: formData.status,
         awareOfMember: formData.awareOfMember,
         memberName: formData.memberName || undefined,
         memberContact: formData.memberPhone || undefined,
         whatsapp: formData.phoneNumber,
         createdDate,
+        problem_des: formData.problem_des,
       };
 
       // Generate and download PDF
