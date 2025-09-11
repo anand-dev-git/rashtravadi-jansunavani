@@ -22,6 +22,7 @@ function RegisterPageContent() {
     phoneNumber: "",
     status: "",
     complaintSource: "Web",
+    problem_des: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -74,6 +75,7 @@ function RegisterPageContent() {
         remarks: null,
         memberPhone: formData.memberPhone || null,
         complaintSource: formData.complaintSource,
+        problem_des: formData.problem_des,
       };
       const createRes = await fetch("/api/complaint-records", {
         method: "POST",
@@ -94,6 +96,7 @@ function RegisterPageContent() {
         gender: formData.gender,
         age: formData.age,
         problem: normalizeProblemForStorage(formData.problem),
+        problem_des: formData.problem_des,
         status: formData.status,
         awareOfMember: formData.awareOfMember,
         memberName: formData.memberName || undefined,
@@ -365,6 +368,26 @@ function RegisterPageContent() {
                   </option>
                 ))}
               </select>
+            </div>
+
+            {/* Problem Description */}
+            <div>
+              <label
+                htmlFor="problem_des"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Problem Description
+              </label>
+              <textarea
+                id="problem_des"
+                name="problem_des"
+                rows={3}
+                required
+                value={formData.problem_des}
+                onChange={handleChange}
+                placeholder="Describe your problem"
+                className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              />
             </div>
 
             {/* Aware of any existing DB Employee */}
