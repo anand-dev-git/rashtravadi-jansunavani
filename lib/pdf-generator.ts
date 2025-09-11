@@ -22,6 +22,7 @@ interface TicketData {
   createdDate: string;
   remarks?: string;
   dbEmployee?: string;
+  problem_des: string;
 }
 
 async function loadFontAsBase64(fontPath: string): Promise<string | null> {
@@ -172,6 +173,7 @@ export async function generateTicketPDF(
   const rightFields = [
     ["Created Date:", data.createdDate],
     ["Problem:", data.problem],
+    ["Problem Description:", data.problem_des],
     ["Status:", data.status || "Not Set"],
     ["WhatsApp:", data.whatsapp],
     // ["Aware of DB Employee:", data.awareOfMember],
@@ -356,6 +358,7 @@ export async function generateTicketPDFBase64(
   const rightFields = [
     ["Created Date:", data.createdDate],
     ["Problem:", data.problem],
+    ["Problem Description:", data.problem_des],
     ["Status:", data.status || "Not Set"],
     ["WhatsApp:", data.whatsapp],
     // ["Aware of DB Employee:", data.awareOfMember],
@@ -575,6 +578,7 @@ export function generatePrintableHTML(
     { label: "Gender", value: data.gender },
     ...(data.age ? [{ label: "Age", value: data.age }] : []),
     { label: "Problem", value: data.problem, fullWidth: true },
+    { label: "Problem Description", value: data.problem_des, fullWidth: true },
     { label: "Status", value: data.status || "Not Set" },
     { label: "WhatsApp", value: data.whatsapp },
     // { label: "Aware of DB Employee", value: data.awareOfMember },
