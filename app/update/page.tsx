@@ -68,6 +68,7 @@ function UpdatePageContent() {
         memberContact: r.memberPhone ?? undefined,
         dbEmp: r.dbEmp ?? undefined,
         whatsapp: r.phoneNumber ?? "",
+        problem_des: r.problem_des ?? "",
       });
       if (typeof r.status === "string") setStatus(r.status as typeof status);
       setMember(r.dbEmp ?? "");
@@ -154,6 +155,7 @@ function UpdatePageContent() {
                   <Detail label="Language" value={details.language} />
                   <Detail label="Gender" value={details.gender} />
                   <Detail label="Problem" value={details.problem} wide />
+                  <Detail label="Problem Description" value={details.problem_des} wide />
                   <Detail
                     label="Aware of Member"
                     value={details.awareOfMember}
