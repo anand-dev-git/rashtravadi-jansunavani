@@ -7,7 +7,7 @@ export default function HomePage() {
         {/* App title centered with logo space */}
         <div className="pt-12 sm:pt-16">
           <div className="mx-auto flex flex-col items-center text-center">
-            <Logo width={150} height={150} />
+            <Logo width={200} height={170} />
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
               JanSamwad
             </h1>
