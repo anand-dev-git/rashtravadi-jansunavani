@@ -46,7 +46,8 @@ export async function ensureComplaintRecordsTable(): Promise<void> {
       status VARCHAR(64),
       remarks TEXT,
       memberPhone VARCHAR(64),
-      complaintSource VARCHAR(64) DEFAULT 'Web'
+      complaintSource VARCHAR(64) DEFAULT 'Web',
+      problem_des VARCHAR(150)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
   `;
   await pool.query(createSql);
