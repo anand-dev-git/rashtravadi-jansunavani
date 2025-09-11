@@ -15,6 +15,7 @@ type RegistrationDetails = {
   memberContact?: string;
   dbEmp?: string;
   whatsapp: string;
+  problem_des: string;
 };
 
 function UpdatePageContent() {
