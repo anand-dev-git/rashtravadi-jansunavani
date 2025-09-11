@@ -602,7 +602,6 @@ function DashboardContent() {
               {stats?.departmentCounts &&
                 Object.entries(stats.departmentCounts)
                   .sort(([, a], [, b]) => b - a)
-                  .slice(0, 10)
                   .map(([department, count], index) => {
                     const maxCount = Math.max(
                       ...Object.values(stats.departmentCounts)
@@ -702,7 +701,6 @@ function DashboardContent() {
                   {stats?.departmentCounts &&
                     Object.entries(stats.departmentCounts)
                       .sort(([, a], [, b]) => b - a)
-                      .slice(0, 8)
                       .map(([department, count], index) => {
                         const percentage = stats?.totalTickets
                           ? ((count / stats.totalTickets) * 100).toFixed(1)
