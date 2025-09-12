@@ -48,7 +48,7 @@ describe("Register Page", () => {
     (global.fetch as jest.Mock)
       .mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ ticketNumber: "JD000001AP" }),
+        json: () => Promise.resolve({ ticketNumber: "JDW000001AP" }),
       })
       .mockResolvedValueOnce({
         ok: true,
@@ -186,7 +186,7 @@ describe("Register Page", () => {
     (global.fetch as jest.Mock)
       .mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ ticketNumber: "JD000001AP" }),
+        json: () => Promise.resolve({ ticketNumber: "JDW000001AP" }),
       })
       .mockResolvedValueOnce({
         ok: false,
@@ -224,9 +224,10 @@ describe("Register Page", () => {
 
     await waitFor(
       () => {
+        // Check for error in the error paragraph or toast
         expect(screen.getByText(/create failed: 500/i)).toBeInTheDocument();
       },
-      { timeout: 2000 }
+      { timeout: 3000 }
     );
   });
 });

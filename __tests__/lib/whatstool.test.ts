@@ -120,7 +120,7 @@ describe("WhatsTool Integration", () => {
     it("sends registration message with PDF", async () => {
       const result = await sendRegistrationWhatsApp(
         "919108455178",
-        "JD000001AP",
+        "JDW000001AP",
         "base64-pdf-data"
       );
 

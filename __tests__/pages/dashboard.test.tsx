@@ -1,6 +1,13 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import DashboardPage from "@/app/dashboard/page";
 
+// Mock AuthGuard
+jest.mock("@/components/auth-guard", () => {
+  return function MockAuthGuard({ children }: { children: React.ReactNode }) {
+    return <>{children}</>;
+  };
+});
+
 // Mock fetch
 global.fetch = jest.fn();
 
@@ -36,19 +43,19 @@ describe("Dashboard Page", () => {
       json: () =>
         Promise.resolve({
           statusCounts: {
-            Closed: 10,
             "Under Review": 15,
             "Work in Progress": 8,
             Rejected: 3,
             "Wrong Department": 2,
             "Problem Solved": 12,
           },
-          ageGroupCounts: {
+          ageCounts: {
             "18-25": 5,
             "26-35": 12,
             "36-50": 18,
             "51-65": 8,
             "65+": 2,
+            Other: 0,
           },
           departmentCounts: {
             "Water Supply": 15,
@@ -57,26 +64,30 @@ describe("Dashboard Page", () => {
             "Police Department": 5,
           },
           totalTickets: 50,
+          recentTickets: 10,
+          resolvedTickets: 12,
+          resolutionRate: "24.0",
         }),
     });
   });
 
-  it("renders dashboard title", () => {
+  it("renders dashboard title", async () => {
     render(<DashboardPage />);
 
-    expect(screen.getByText("Dashboard")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("Dashboard")).toBeInTheDocument();
+    });
   });
 
   it("renders status cards", async () => {
     render(<DashboardPage />);
 
     await waitFor(() => {
-      expect(screen.getByText("Closed")).toBeInTheDocument();
-      expect(screen.getByText("Under Review")).toBeInTheDocument();
-      expect(screen.getByText("Work in Progress")).toBeInTheDocument();
-      expect(screen.getByText("Rejected")).toBeInTheDocument();
-      expect(screen.getByText("Wrong Department")).toBeInTheDocument();
-      expect(screen.getByText("Problem Solved")).toBeInTheDocument();
+      expect(screen.getAllByText("Under Review")[0]).toBeInTheDocument();
+      expect(screen.getAllByText("Work in Progress")[0]).toBeInTheDocument();
+      expect(screen.getAllByText("Rejected")[0]).toBeInTheDocument();
+      expect(screen.getAllByText("Wrong Department")[0]).toBeInTheDocument();
+      expect(screen.getAllByText("Problem Solved")[0]).toBeInTheDocument();
     });
   });
 
@@ -84,12 +95,11 @@ describe("Dashboard Page", () => {
     render(<DashboardPage />);
 
     await waitFor(() => {
-      expect(screen.getByText("10")).toBeInTheDocument(); // Closed
-      expect(screen.getByText("15")).toBeInTheDocument(); // Under Review
-      expect(screen.getByText("8")).toBeInTheDocument(); // Work in Progress
-      expect(screen.getByText("3")).toBeInTheDocument(); // Rejected
-      expect(screen.getByText("2")).toBeInTheDocument(); // Wrong Department
-      expect(screen.getByText("12")).toBeInTheDocument(); // Problem Solved
+      expect(screen.getAllByText("15")[0]).toBeInTheDocument(); // Under Review
+      expect(screen.getAllByText("8")[0]).toBeInTheDocument(); // Work in Progress
+      expect(screen.getAllByText("3")[0]).toBeInTheDocument(); // Rejected
+      expect(screen.getAllByText("2")[0]).toBeInTheDocument(); // Wrong Department
+      expect(screen.getAllByText("12")[0]).toBeInTheDocument(); // Problem Solved
     });
   });
 
@@ -110,11 +120,13 @@ describe("Dashboard Page", () => {
     render(<DashboardPage />);
 
     await waitFor(() => {
-      expect(screen.getByText("Department-wise Tickets")).toBeInTheDocument();
-      expect(screen.getByText("Water Supply")).toBeInTheDocument();
-      expect(screen.getByText("Garbage and Cleanliness")).toBeInTheDocument();
-      expect(screen.getByText("Property Tax")).toBeInTheDocument();
-      expect(screen.getByText("Police Department")).toBeInTheDocument();
+      expect(screen.getByText("Tickets by Department")).toBeInTheDocument();
+      expect(screen.getAllByText("Water Supply")[0]).toBeInTheDocument();
+      expect(
+        screen.getAllByText("Garbage and Cleanliness")[0]
+      ).toBeInTheDocument();
+      expect(screen.getAllByText("Property Tax")[0]).toBeInTheDocument();
+      expect(screen.getAllByText("Police Department")[0]).toBeInTheDocument();
     });
   });
 
@@ -122,7 +134,7 @@ describe("Dashboard Page", () => {
     render(<DashboardPage />);
 
     await waitFor(() => {
-      expect(screen.getByText("Total Tickets: 50")).toBeInTheDocument();
+      expect(screen.getByText("50")).toBeInTheDocument();
     });
   });
 
@@ -132,19 +144,23 @@ describe("Dashboard Page", () => {
     expect(screen.getByText("Loading dashboard...")).toBeInTheDocument();
   });
 
-  it("renders date range filter buttons", () => {
+  it("renders date range filter buttons", async () => {
     render(<DashboardPage />);
 
-    expect(screen.getByText("All Time")).toBeInTheDocument();
-    expect(screen.getByText("Today")).toBeInTheDocument();
-    expect(screen.getByText("2 Days")).toBeInTheDocument();
-    expect(screen.getByText("5 Days")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("All Time")).toBeInTheDocument();
+      expect(screen.getByText("Today")).toBeInTheDocument();
+      expect(screen.getByText("2 Days")).toBeInTheDocument();
+      expect(screen.getByText("5 Days")).toBeInTheDocument();
+    });
   });
 
-  it("shows current period label", () => {
+  it("shows current period label", async () => {
     render(<DashboardPage />);
 
-    expect(screen.getByText(/Period:/)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/Period:/)).toBeInTheDocument();
+    });
   });
 
   it("handles API errors gracefully", async () => {

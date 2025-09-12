@@ -19,7 +19,7 @@ describe("/api/complaint-records", () => {
       const mockRecords = [
         {
           id: 1,
-          ticketNumber: "JD000001AP",
+          ticketNumber: "JDW000001AP",
           name: "Test User",
           status: "Under Review",
         },
@@ -61,7 +61,7 @@ describe("/api/complaint-records", () => {
         {
           method: "POST",
           body: JSON.stringify({
-            ticketNumber: "JD000001AP",
+            ticketNumber: "JDW000001AP",
             name: "Test User",
             address: "Test Address",
             constituency: "hadapasar",
@@ -96,7 +96,7 @@ describe("/api/complaint-records", () => {
         {
           method: "POST",
           body: JSON.stringify({
-            ticketNumber: "JD000001AP",
+            ticketNumber: "JDW000001AP",
             // Missing other required fields
           }),
         }
@@ -118,7 +118,7 @@ describe("/api/complaint-records", () => {
         {
           method: "POST",
           body: JSON.stringify({
-            ticketNumber: "JD000001AP",
+            ticketNumber: "JDW000001AP",
             name: "Test User",
             address: "Test Address",
             constituency: "hadapasar",

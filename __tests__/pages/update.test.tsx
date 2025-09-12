@@ -1,6 +1,13 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import UpdatePage from "@/app/update/page";
 
+// Mock AuthGuard
+jest.mock("@/components/auth-guard", () => {
+  return function MockAuthGuard({ children }: { children: React.ReactNode }) {
+    return <>{children}</>;
+  };
+});
+
 // Mock fetch
 global.fetch = jest.fn();
 
@@ -25,24 +32,27 @@ describe("Update Page", () => {
   it("renders search form", () => {
     render(<UpdatePage />);
 
-    expect(screen.getByLabelText(/ticket number/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /search/i })).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText(/enter ticket number/i)
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /submit/i })).toBeInTheDocument();
   });
 
   it("shows validation error for empty ticket number", async () => {
     render(<UpdatePage />);
 
-    const searchButton = screen.getByRole("button", { name: /search/i });
+    const searchButton = screen.getByRole("button", { name: /submit/i });
     fireEvent.click(searchButton);
 
+    // HTML5 validation prevents form submission, so fetch should not be called
     await waitFor(() => {
-      expect(screen.getByText("Ticket number is required")).toBeInTheDocument();
+      expect(global.fetch).not.toHaveBeenCalled();
     });
   });
 
   it("searches for ticket with valid number", async () => {
     const mockTicketData = {
-      ticketNumber: "JD000001AP",
+      ticketNumber: "JDW000001AP",
       name: "Test User",
       address: "Test Address",
       status: "Under Review",
@@ -57,22 +67,22 @@ describe("Update Page", () => {
 
     render(<UpdatePage />);
 
-    const ticketInput = screen.getByLabelText(/ticket number/i);
-    const searchButton = screen.getByRole("button", { name: /search/i });
+    const ticketInput = screen.getByPlaceholderText(/enter ticket number/i);
+    const searchButton = screen.getByRole("button", { name: /submit/i });
 
-    fireEvent.change(ticketInput, { target: { value: "JD000001AP" } });
+    fireEvent.change(ticketInput, { target: { value: "JDW000001AP" } });
     fireEvent.click(searchButton);
 
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
-        "/api/complaint-records/JD000001AP"
+        "/api/complaint-records/JDW000001AP"
       );
     });
   });
 
   it("displays ticket details after successful search", async () => {
     const mockTicketData = {
-      ticketNumber: "JD000001AP",
+      ticketNumber: "JDW000001AP",
       name: "Test User",
       address: "Test Address",
       status: "Under Review",
@@ -87,10 +97,10 @@ describe("Update Page", () => {
 
     render(<UpdatePage />);
 
-    const ticketInput = screen.getByLabelText(/ticket number/i);
-    const searchButton = screen.getByRole("button", { name: /search/i });
+    const ticketInput = screen.getByPlaceholderText(/enter ticket number/i);
+    const searchButton = screen.getByRole("button", { name: /submit/i });
 
-    fireEvent.change(ticketInput, { target: { value: "JD000001AP" } });
+    fireEvent.change(ticketInput, { target: { value: "JDW000001AP" } });
     fireEvent.click(searchButton);
 
     await waitFor(() => {
@@ -108,10 +118,10 @@ describe("Update Page", () => {
 
     render(<UpdatePage />);
 
-    const ticketInput = screen.getByLabelText(/ticket number/i);
-    const searchButton = screen.getByRole("button", { name: /search/i });
+    const ticketInput = screen.getByPlaceholderText(/enter ticket number/i);
+    const searchButton = screen.getByRole("button", { name: /submit/i });
 
-    fireEvent.change(ticketInput, { target: { value: "JD000001AP" } });
+    fireEvent.change(ticketInput, { target: { value: "JDW000001AP" } });
     fireEvent.click(searchButton);
 
     await waitFor(() => {
@@ -121,7 +131,7 @@ describe("Update Page", () => {
 
   it("updates ticket when update form is submitted", async () => {
     const mockTicketData = {
-      ticketNumber: "JD000001AP",
+      ticketNumber: "JDW000001AP",
       name: "Test User",
       address: "Test Address",
       status: "Under Review",
@@ -142,10 +152,10 @@ describe("Update Page", () => {
     render(<UpdatePage />);
 
     // Search for ticket first
-    const ticketInput = screen.getByLabelText(/ticket number/i);
-    const searchButton = screen.getByRole("button", { name: /search/i });
+    const ticketInput = screen.getByPlaceholderText(/enter ticket number/i);
+    const searchButton = screen.getByRole("button", { name: /submit/i });
 
-    fireEvent.change(ticketInput, { target: { value: "JD000001AP" } });
+    fireEvent.change(ticketInput, { target: { value: "JDW000001AP" } });
     fireEvent.click(searchButton);
 
     await waitFor(() => {
@@ -163,7 +173,7 @@ describe("Update Page", () => {
 
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
-        "/api/complaint-records/JD000001AP",
+        "/api/complaint-records/JDW000001AP",
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -179,7 +189,7 @@ describe("Update Page", () => {
 
   it("shows success message after successful update", async () => {
     const mockTicketData = {
-      ticketNumber: "JD000001AP",
+      ticketNumber: "JDW000001AP",
       name: "Test User",
       address: "Test Address",
       status: "Under Review",
@@ -200,10 +210,10 @@ describe("Update Page", () => {
     render(<UpdatePage />);
 
     // Search for ticket first
-    const ticketInput = screen.getByLabelText(/ticket number/i);
-    const searchButton = screen.getByRole("button", { name: /search/i });
+    const ticketInput = screen.getByPlaceholderText(/enter ticket number/i);
+    const searchButton = screen.getByRole("button", { name: /submit/i });
 
-    fireEvent.change(ticketInput, { target: { value: "JD000001AP" } });
+    fireEvent.change(ticketInput, { target: { value: "JDW000001AP" } });
     fireEvent.click(searchButton);
 
     await waitFor(() => {

@@ -30,15 +30,15 @@ describe("/api/ticket-number", () => {
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.ticketNumber).toBe("JD000001AP");
+    expect(data.ticketNumber).toBe("JDW000001AP");
   });
 
   it("returns next ticket number when existing tickets exist", async () => {
     query.mockResolvedValue([
       [
-        { ticketNumber: "JD000003AP" },
-        { ticketNumber: "JD000002AP" },
-        { ticketNumber: "JD000001AP" },
+        { ticketNumber: "JDW000003AP" },
+        { ticketNumber: "JDW000002AP" },
+        { ticketNumber: "JDW000001AP" },
       ],
       {},
     ]);
@@ -47,15 +47,15 @@ describe("/api/ticket-number", () => {
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.ticketNumber).toBe("JD000004AP");
+    expect(data.ticketNumber).toBe("JDW000004AP");
   });
 
   it("handles tickets with gaps in numbering", async () => {
     query.mockResolvedValue([
       [
-        { ticketNumber: "JD000005AP" },
-        { ticketNumber: "JD000003AP" },
-        { ticketNumber: "JD000001AP" },
+        { ticketNumber: "JDW000005AP" },
+        { ticketNumber: "JDW000003AP" },
+        { ticketNumber: "JDW000001AP" },
       ],
       {},
     ]);
@@ -64,17 +64,17 @@ describe("/api/ticket-number", () => {
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.ticketNumber).toBe("JD000006AP");
+    expect(data.ticketNumber).toBe("JDW000006AP");
   });
 
   it("ignores invalid ticket formats", async () => {
     query.mockResolvedValue([
       [
-        { ticketNumber: "JD000002AP" },
+        { ticketNumber: "JDW000002AP" },
         { ticketNumber: "INVALID123" },
-        { ticketNumber: "JD123456789AP" }, // Too long
-        { ticketNumber: "JD000AP" }, // Too short
-        { ticketNumber: "JD000001AP" },
+        { ticketNumber: "JDW123456789AP" }, // Too long
+        { ticketNumber: "JDW000AP" }, // Too short
+        { ticketNumber: "JDW000001AP" },
       ],
       {},
     ]);
@@ -83,16 +83,16 @@ describe("/api/ticket-number", () => {
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.ticketNumber).toBe("JD000003AP");
+    expect(data.ticketNumber).toBe("JDW000003AP");
   });
 
   it("ignores tickets with numbers >= 100000", async () => {
     query.mockResolvedValue([
       [
-        { ticketNumber: "JD100001AP" }, // Should be ignored
-        { ticketNumber: "JD100000AP" }, // Should be ignored
-        { ticketNumber: "JD000999AP" },
-        { ticketNumber: "JD000001AP" },
+        { ticketNumber: "JDW100001AP" }, // Should be ignored
+        { ticketNumber: "JDW100000AP" }, // Should be ignored
+        { ticketNumber: "JDW000999AP" },
+        { ticketNumber: "JDW000001AP" },
       ],
       {},
     ]);
@@ -101,7 +101,7 @@ describe("/api/ticket-number", () => {
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.ticketNumber).toBe("JD001000AP");
+    expect(data.ticketNumber).toBe("JDW001000AP");
   });
 
   it("handles database errors", async () => {
@@ -121,15 +121,15 @@ describe("/api/ticket-number", () => {
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.ticketNumber).toBe("JD000001AP");
+    expect(data.ticketNumber).toBe("JDW000001AP");
   });
 
   it("handles tickets with zero padding correctly", async () => {
     query.mockResolvedValue([
       [
-        { ticketNumber: "JD000100AP" },
-        { ticketNumber: "JD000010AP" },
-        { ticketNumber: "JD000001AP" },
+        { ticketNumber: "JDW000100AP" },
+        { ticketNumber: "JDW000010AP" },
+        { ticketNumber: "JDW000001AP" },
       ],
       {},
     ]);
@@ -138,18 +138,18 @@ describe("/api/ticket-number", () => {
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.ticketNumber).toBe("JD000101AP");
+    expect(data.ticketNumber).toBe("JDW000101AP");
   });
 
   it("handles mixed valid and invalid tickets", async () => {
     query.mockResolvedValue([
       [
-        { ticketNumber: "JD000003AP" },
+        { ticketNumber: "JDW000003AP" },
         { ticketNumber: "INVALID" },
-        { ticketNumber: "JD000002AP" },
-        { ticketNumber: "JD123456789AP" }, // Too long
-        { ticketNumber: "JD000001AP" },
-        { ticketNumber: "NOTJD000001AP" }, // Wrong prefix
+        { ticketNumber: "JDW000002AP" },
+        { ticketNumber: "JDW123456789AP" }, // Too long
+        { ticketNumber: "JDW000001AP" },
+        { ticketNumber: "NOTJDW000001AP" }, // Wrong prefix
       ],
       {},
     ]);
@@ -158,17 +158,17 @@ describe("/api/ticket-number", () => {
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.ticketNumber).toBe("JD000004AP");
+    expect(data.ticketNumber).toBe("JDW000004AP");
   });
 
   it("correctly finds highest ticket number when unordered", async () => {
     // Test the actual bug fix - when tickets are not in perfect order
     query.mockResolvedValue([
       [
-        { ticketNumber: "JD000002AP" },
-        { ticketNumber: "JD000005AP" },
-        { ticketNumber: "JD000001AP" },
-        { ticketNumber: "JD000003AP" },
+        { ticketNumber: "JDW000002AP" },
+        { ticketNumber: "JDW000005AP" },
+        { ticketNumber: "JDW000001AP" },
+        { ticketNumber: "JDW000003AP" },
       ],
       {},
     ]);
@@ -177,25 +177,25 @@ describe("/api/ticket-number", () => {
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.ticketNumber).toBe("JD000006AP");
+    expect(data.ticketNumber).toBe("JDW000006AP");
   });
 
   it("handles single existing ticket correctly", async () => {
-    query.mockResolvedValue([[{ ticketNumber: "JD000001AP" }], {}]);
+    query.mockResolvedValue([[{ ticketNumber: "JDW000001AP" }], {}]);
 
     const response = await GET();
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.ticketNumber).toBe("JD000002AP");
+    expect(data.ticketNumber).toBe("JDW000002AP");
   });
 
   it("handles high ticket numbers correctly", async () => {
     query.mockResolvedValue([
       [
-        { ticketNumber: "JD001317AP" },
-        { ticketNumber: "JD001316AP" },
-        { ticketNumber: "JD001315AP" },
+        { ticketNumber: "JDW001317AP" },
+        { ticketNumber: "JDW001316AP" },
+        { ticketNumber: "JDW001315AP" },
       ],
       {},
     ]);
@@ -204,6 +204,6 @@ describe("/api/ticket-number", () => {
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.ticketNumber).toBe("JD001318AP");
+    expect(data.ticketNumber).toBe("JDW001318AP");
   });
 });
