@@ -12,7 +12,7 @@ const {
   MYSQL_HOST = "db-agent-crm.c7a8sksgmigz.ap-south-1.rds.amazonaws.com",
   MYSQL_PORT = "3306",
   MYSQL_USER = "dbmaster",
-  MYSQL_PASSWORD = "yJk9qZPCoh8EQQ*cDV95FFArJC#t",
+  MYSQL_PASSWORD = "g~5*lLV|cD*4dXnGM<25oGmeNGIk",
   MYSQL_DATABASE = "agentcrmdb",
 } = process.env;
 
