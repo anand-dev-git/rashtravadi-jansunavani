@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { config } from "./config";
 
 export interface User {
   id: number;
@@ -16,10 +17,7 @@ export interface TokenPayload {
 
 export function verifyToken(token: string): TokenPayload | null {
   try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET || "your-secret-key"
-    ) as TokenPayload;
+    const decoded = jwt.verify(token, config.jwt.secret) as TokenPayload;
     return decoded;
   } catch (error) {
     return null;
@@ -27,8 +25,8 @@ export function verifyToken(token: string): TokenPayload | null {
 }
 
 export function createToken(payload: TokenPayload): string {
-  return jwt.sign(payload, process.env.JWT_SECRET || "your-secret-key", {
-    expiresIn: "24h",
+  return jwt.sign(payload, config.jwt.secret, {
+    expiresIn: config.jwt.expiresIn,
   });
 }
 

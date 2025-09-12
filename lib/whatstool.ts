@@ -1,4 +1,5 @@
 import { uploadPDFToCloud } from "./pdf-upload";
+import { config } from "./config";
 
 // WhatsTool Business API configuration
 const WHATSTOOL_API_URL =

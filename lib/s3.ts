@@ -4,18 +4,19 @@ import {
   GetObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { config } from "./config";
 
 // Initialize S3 client
 const s3Client = new S3Client({
-  region: process.env.AWS_REGION || "us-east-1",
+  region: config.aws.region,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+    accessKeyId: config.aws.accessKeyId,
+    secretAccessKey: config.aws.secretAccessKey,
   },
 });
 
-const BUCKET_NAME = "jd-complaint-tickets";
-const FOLDER_PREFIX = "CRM_Tickets/";
+const BUCKET_NAME = config.aws.bucketName;
+const FOLDER_PREFIX = config.aws.folderPrefix;
 
 export interface S3UploadResult {
   success: boolean;

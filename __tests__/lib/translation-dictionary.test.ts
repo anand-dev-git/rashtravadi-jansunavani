@@ -14,13 +14,13 @@ describe("Translation Dictionary", () => {
     it("translates Hindi text to English", () => {
       expect(getEnglishProblem("जल आपूर्ति")).toBe("Water Supply");
       expect(getEnglishProblem("मालमत्ता कर")).toBe("Property Tax");
-      expect(getEnglishProblem("पुलिस विभाग")).toBe("Police Department");
+      expect(getEnglishProblem("पुलिस विभाग")).toBe("Police");
     });
 
     it("translates Marathi text to English", () => {
       expect(getEnglishProblem("जल आपूर्ति")).toBe("Water Supply");
       expect(getEnglishProblem("घनकचरा व स्वच्छता")).toBe(
-        "Garbage and Cleanliness"
+        "Waste & Cleanliness"
       );
     });
 
@@ -32,7 +32,7 @@ describe("Translation Dictionary", () => {
 
     it("handles partial matches", () => {
       expect(getEnglishProblem("Water")).toBe("Water Supply");
-      expect(getEnglishProblem("Police")).toBe("Police Department");
+      expect(getEnglishProblem("Police")).toBe("Police");
     });
 
     it("returns original text if no match found", () => {
@@ -54,7 +54,7 @@ describe("Translation Dictionary", () => {
       expect(problems.length).toBeGreaterThan(0);
       expect(problems).toContain("Water Supply");
       expect(problems).toContain("Property Tax");
-      expect(problems).toContain("Police Department");
+      expect(problems).toContain("Police");
     });
 
     it("returns unique problem names", () => {

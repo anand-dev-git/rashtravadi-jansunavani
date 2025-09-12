@@ -1,27 +1,15 @@
 import mysql from "mysql2/promise";
+import { config, validateConfig } from "./config";
 
-// Fill these in via environment variables or hard-code for local testing
-// Example env vars to set in .env.local:
-// MYSQL_HOST=localhost
-// MYSQL_PORT=3306
-// MYSQL_USER=root
-// MYSQL_PASSWORD=your_password
-// MYSQL_DATABASE=rashtrawadi
-
-const {
-  MYSQL_HOST = "db-agent-crm.c7a8sksgmigz.ap-south-1.rds.amazonaws.com",
-  MYSQL_PORT = "3306",
-  MYSQL_USER = "dbmaster",
-  MYSQL_PASSWORD = "g~5*lLV|cD*4dXnGM<25oGmeNGIk",
-  MYSQL_DATABASE = "agentcrmdb",
-} = process.env;
+// Validate configuration on startup
+validateConfig();
 
 export const pool = mysql.createPool({
-  host: MYSQL_HOST || "<MYSQL_HOST>",
-  port: Number(MYSQL_PORT || 3306),
-  user: MYSQL_USER || "<MYSQL_USER>",
-  password: MYSQL_PASSWORD || "<MYSQL_PASSWORD>",
-  database: MYSQL_DATABASE || "<MYSQL_DATABASE>",
+  host: config.database.host,
+  port: config.database.port,
+  user: config.database.user,
+  password: config.database.password,
+  database: config.database.name,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,

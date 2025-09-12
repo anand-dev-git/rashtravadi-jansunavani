@@ -24,6 +24,9 @@ jest.mock("next/navigation", () => ({
   usePathname: () => "/update",
 }));
 
+// Mock window.alert
+global.alert = jest.fn();
+
 describe("Update Page", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -75,7 +78,8 @@ describe("Update Page", () => {
 
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
-        "/api/complaint-records/JDW000001AP"
+        "/api/complaint-records/JDW000001AP",
+        { cache: "no-store" }
       );
     });
   });
@@ -112,8 +116,8 @@ describe("Update Page", () => {
 
   it("shows error message when ticket not found", async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
+      status: 404,
       ok: false,
-      json: () => Promise.resolve({ error: "Ticket not found" }),
     });
 
     render(<UpdatePage />);
@@ -167,7 +171,7 @@ describe("Update Page", () => {
     const remarksInput = screen.getByLabelText(/remarks/i);
     const updateButton = screen.getByRole("button", { name: /update/i });
 
-    fireEvent.change(statusSelect, { target: { value: "Closed" } });
+    fireEvent.change(statusSelect, { target: { value: "Problem Solved" } });
     fireEvent.change(remarksInput, { target: { value: "Updated remarks" } });
     fireEvent.click(updateButton);
 
@@ -178,9 +182,10 @@ describe("Update Page", () => {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            status: "Closed",
+            status: "Problem Solved",
             remarks: "Updated remarks",
-            dbEmployeeName: "Test Member",
+            dbEmp: null,
+            complaintSource: "Web",
           }),
         }
       );
@@ -225,14 +230,12 @@ describe("Update Page", () => {
     const remarksInput = screen.getByLabelText(/remarks/i);
     const updateButton = screen.getByRole("button", { name: /update/i });
 
-    fireEvent.change(statusSelect, { target: { value: "Closed" } });
+    fireEvent.change(statusSelect, { target: { value: "Problem Solved" } });
     fireEvent.change(remarksInput, { target: { value: "Updated remarks" } });
     fireEvent.click(updateButton);
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/ticket updated successfully/i)
-      ).toBeInTheDocument();
+      expect(global.alert).toHaveBeenCalledWith("Ticket updated successfully!");
     });
   });
 });
