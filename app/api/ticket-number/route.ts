@@ -3,22 +3,22 @@ import { query } from "@/lib/db";
 
 export async function GET() {
   try {
-    // Get all tickets that match the JD format and find the highest number
+    // Get all tickets that match the JDW format and find the highest number
     const [result] = await query<{ ticketNumber: string }>(
       `SELECT ticketNumber 
        FROM complaint_records 
-       WHERE ticketNumber LIKE 'JD%' 
-       AND LENGTH(ticketNumber) = 10
+       WHERE ticketNumber LIKE 'JDW%' 
+       AND LENGTH(ticketNumber) = 11
        ORDER BY ticketNumber DESC 
        LIMIT 10`
     );
 
     let nextNumber = 1;
 
-    // Look through the results to find the highest valid JD000001AP format ticket
+    // Look through the results to find the highest valid JDW000001AP format ticket
     for (const row of result) {
       const ticket = row.ticketNumber;
-      const match = ticket.match(/^JD(\d{6})AP$/);
+      const match = ticket.match(/^JDW(\d{6})AP$/);
       if (match) {
         const ticketNumber = parseInt(match[1], 10);
         // Only consider reasonable numbers (less than 100000 to avoid garbage data)
@@ -32,7 +32,7 @@ export async function GET() {
 
     // Format the number with leading zeros (6 digits)
     const formattedNumber = nextNumber.toString().padStart(6, "0");
-    const ticketNumber = `JD${formattedNumber}AP`;
+    const ticketNumber = `JDW${formattedNumber}AP`;
 
     return NextResponse.json({ ticketNumber });
   } catch (error) {

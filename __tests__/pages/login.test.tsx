@@ -44,9 +44,9 @@ describe("Login Page", () => {
     const loginButton = screen.getByRole("button", { name: /sign in/i });
     fireEvent.click(loginButton);
 
+    // HTML5 validation prevents form submission, so fetch should not be called
     await waitFor(() => {
-      expect(screen.getByText("Username is required")).toBeInTheDocument();
-      expect(screen.getByText("Password is required")).toBeInTheDocument();
+      expect(global.fetch).not.toHaveBeenCalled();
     });
   });
 
@@ -95,6 +95,13 @@ describe("Login Page", () => {
   });
 
   it("redirects to home page on successful login", async () => {
+    // Mock window.location.href
+    const mockLocation = { href: "" };
+    Object.defineProperty(window, "location", {
+      value: mockLocation,
+      writable: true,
+    });
+
     render(<LoginPage />);
 
     const usernameInput = screen.getByLabelText(/username/i);
@@ -106,7 +113,7 @@ describe("Login Page", () => {
     fireEvent.click(loginButton);
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/");
+      expect(mockLocation.href).toBe("/");
     });
   });
 });
