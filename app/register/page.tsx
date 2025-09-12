@@ -58,36 +58,7 @@ function RegisterPageContent() {
         .slice(0, 19)
         .replace("T", " ");
 
-      // 3) POST to create record
-      const payload = {
-        ticketNumber,
-        address: formData.address,
-        constituency: formData.constituency,
-        language: formData.language,
-        createdDate,
-        age: formData.age,
-        gender: formData.gender,
-        problem: normalizeProblemForStorage(formData.problem),
-        pdf_link: "",
-        name: formData.name,
-        memberName: formData.memberName || null,
-        phoneNumber: formData.phoneNumber,
-        status: null,
-        remarks: null,
-        memberPhone: formData.memberPhone || null,
-        complaintSource: formData.complaintSource,
-        problem_des: formData.problem_des,
-      };
-      const createRes = await fetch("/api/complaint-records", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
-      setCreatedTicket(ticketNumber);
-      showToast("success", `Created ticket #${ticketNumber}`);
-
-      // 5) Generate PDF with entered information
+      // 3) Prepare ticket data for PDF generation
       const ticketData = {
         ticketNumber,
         name: formData.name,
@@ -106,7 +77,64 @@ function RegisterPageContent() {
         problem_des: formData.problem_des,
       };
 
-      // Generate and download PDF
+      // 4) Upload PDF to S3 and get the URL
+      let pdfUrl = "";
+      try {
+        const uploadRes = await fetch("/api/upload-pdf", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ticketData,
+            ticketNumber,
+          }),
+        });
+
+        if (uploadRes.ok) {
+          const uploadResult = await uploadRes.json();
+          pdfUrl = uploadResult.pdfUrl;
+          showToast("success", "PDF uploaded to S3 successfully!");
+        } else {
+          console.warn("PDF upload failed, continuing without S3 storage");
+          showToast(
+            "error",
+            "PDF upload to S3 failed, but registration will continue"
+          );
+        }
+      } catch (uploadError) {
+        console.warn("PDF upload error:", uploadError);
+        showToast("error", "PDF upload failed, but registration will continue");
+      }
+
+      // 5) POST to create record with PDF link
+      const payload = {
+        ticketNumber,
+        address: formData.address,
+        constituency: formData.constituency,
+        language: formData.language,
+        createdDate,
+        age: formData.age,
+        gender: formData.gender,
+        problem: normalizeProblemForStorage(formData.problem),
+        pdf_link: pdfUrl,
+        name: formData.name,
+        memberName: formData.memberName || null,
+        phoneNumber: formData.phoneNumber,
+        status: null,
+        remarks: null,
+        memberPhone: formData.memberPhone || null,
+        complaintSource: formData.complaintSource,
+        problem_des: formData.problem_des,
+      };
+      const createRes = await fetch("/api/complaint-records", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
+      setCreatedTicket(ticketNumber);
+      showToast("success", `Created ticket #${ticketNumber}`);
+
+      // 6) Generate and download PDF locally
       await generateTicketPDF(ticketData, false);
 
       // Send WhatsApp message with PDF

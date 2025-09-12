@@ -1,5 +1,4 @@
 import { GET, POST } from "@/app/api/complaint-records/route";
-import { NextRequest } from "next/server";
 
 // Mock database
 jest.mock("@/lib/db", () => ({
@@ -56,11 +55,9 @@ describe("/api/complaint-records", () => {
       ensureComplaintRecordsTable.mockResolvedValue(undefined);
       query.mockResolvedValue([{ insertId: 1 }, {}]);
 
-      const request = new NextRequest(
-        "http://localhost:3000/api/complaint-records",
-        {
-          method: "POST",
-          body: JSON.stringify({
+      const request = {
+        json: () =>
+          Promise.resolve({
             ticketNumber: "JDW000001AP",
             name: "Test User",
             address: "Test Address",
@@ -78,8 +75,7 @@ describe("/api/complaint-records", () => {
             memberPhone: null,
             complaintSource: "Web",
           }),
-        }
-      );
+      } as any;
 
       const response = await POST(request);
       const data = await response.json();
@@ -91,16 +87,13 @@ describe("/api/complaint-records", () => {
     it("handles missing required fields", async () => {
       ensureComplaintRecordsTable.mockResolvedValue(undefined);
 
-      const request = new NextRequest(
-        "http://localhost:3000/api/complaint-records",
-        {
-          method: "POST",
-          body: JSON.stringify({
+      const request = {
+        json: () =>
+          Promise.resolve({
             ticketNumber: "JDW000001AP",
             // Missing other required fields
           }),
-        }
-      );
+      } as any;
 
       const response = await POST(request);
       const data = await response.json();
@@ -113,11 +106,9 @@ describe("/api/complaint-records", () => {
       ensureComplaintRecordsTable.mockResolvedValue(undefined);
       query.mockRejectedValue(new Error("Database error"));
 
-      const request = new NextRequest(
-        "http://localhost:3000/api/complaint-records",
-        {
-          method: "POST",
-          body: JSON.stringify({
+      const request = {
+        json: () =>
+          Promise.resolve({
             ticketNumber: "JDW000001AP",
             name: "Test User",
             address: "Test Address",
@@ -135,8 +126,7 @@ describe("/api/complaint-records", () => {
             memberPhone: null,
             complaintSource: "Web",
           }),
-        }
-      );
+      } as any;
 
       const response = await POST(request);
       const data = await response.json();
