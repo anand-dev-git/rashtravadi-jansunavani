@@ -27,7 +27,7 @@ export function verifyToken(token: string): TokenPayload | null {
 export function createToken(payload: TokenPayload): string {
   return jwt.sign(payload, config.jwt.secret, {
     expiresIn: config.jwt.expiresIn,
-  });
+  } as jwt.SignOptions);
 }
 
 export function getTokenFromRequest(request: Request): string | null {

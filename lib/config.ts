@@ -80,11 +80,11 @@ export const config: Config = {
   },
 
   aws: {
-    region: getEnvVar("AWS_REGION", "ap-south-1"),
-    accessKeyId: getEnvVar("AWS_ACCESS_KEY_ID", ""),
-    secretAccessKey: getEnvVar("AWS_SECRET_ACCESS_KEY", ""),
-    bucketName: getEnvVar("AWS_S3_BUCKET", "jd-complaint-tickets"),
-    folderPrefix: getEnvVar("AWS_S3_FOLDER", "CRM_Tickets/"),
+    region: getEnvVar("S3_REGION", "ap-south-1"),
+    accessKeyId: getEnvVar("S3_ACCESS_KEY_ID", ""),
+    secretAccessKey: getEnvVar("S3_SECRET_ACCESS_KEY", ""),
+    bucketName: getEnvVar("S3_BUCKET_NAME", "jd-complaint-tickets"),
+    folderPrefix: getEnvVar("S3_FOLDER_PREFIX", "CRM_Tickets/"),
   },
 
   jwt: {
@@ -126,8 +126,8 @@ export function validateConfig(): void {
       "MYSQL_USER",
       "MYSQL_PASSWORD",
       "MYSQL_DATABASE",
-      "AWS_ACCESS_KEY_ID",
-      "AWS_SECRET_ACCESS_KEY",
+      "S3_ACCESS_KEY_ID",
+      "S3_SECRET_ACCESS_KEY",
       "JWT_SECRET",
     ];
 

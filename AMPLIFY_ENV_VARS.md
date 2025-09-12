@@ -16,14 +16,14 @@ MYSQL_PASSWORD=your_production_db_password
 MYSQL_DATABASE=your_production_db_name
 ```
 
-### **AWS S3 Configuration**
+### **S3 Configuration (Amplify Compatible)**
 
 ```
-AWS_REGION=ap-south-1
-AWS_ACCESS_KEY_ID=your_aws_access_key_id
-AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key
-AWS_S3_BUCKET=jd-complaint-tickets
-AWS_S3_FOLDER=CRM_Tickets/
+S3_REGION=ap-south-1
+S3_ACCESS_KEY_ID=your_aws_access_key_id
+S3_SECRET_ACCESS_KEY=your_aws_secret_access_key
+S3_BUCKET_NAME=jd-complaint-tickets
+S3_FOLDER_PREFIX=CRM_Tickets/
 ```
 
 ### **JWT Authentication**
@@ -118,12 +118,12 @@ After deployment, test these endpoints:
 ### **Critical (Must Have):**
 
 - `MYSQL_HOST`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_DATABASE`
-- `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`
+- `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`
 - `JWT_SECRET`
 
 ### **Important (Should Have):**
 
-- `AWS_REGION`, `AWS_S3_BUCKET`, `AWS_S3_FOLDER`
+- `S3_REGION`, `S3_BUCKET_NAME`, `S3_FOLDER_PREFIX`
 - `NODE_ENV`
 
 ### **Optional (Nice to Have):**
@@ -166,11 +166,11 @@ MYSQL_USER=root
 MYSQL_PASSWORD=your_local_password
 MYSQL_DATABASE=rashtrawadi_jansunavani
 
-AWS_REGION=ap-south-1
-AWS_ACCESS_KEY_ID=your_aws_access_key_id
-AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key
-AWS_S3_BUCKET=jd-complaint-tickets
-AWS_S3_FOLDER=CRM_Tickets/
+S3_REGION=ap-south-1
+S3_ACCESS_KEY_ID=your_aws_access_key_id
+S3_SECRET_ACCESS_KEY=your_aws_secret_access_key
+S3_BUCKET_NAME=jd-complaint-tickets
+S3_FOLDER_PREFIX=CRM_Tickets/
 
 JWT_SECRET=your_local_jwt_secret
 JWT_EXPIRES_IN=24h

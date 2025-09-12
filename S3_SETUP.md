@@ -19,10 +19,12 @@ DB_USER=root
 DB_PASSWORD=your_password
 DB_NAME=rashtrawadi_jansunavani
 
-# AWS S3 Configuration for PDF Storage
-AWS_REGION=us-east-1
-AWS_ACCESS_KEY_ID=your_aws_access_key_id
-AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key
+# S3 Configuration for PDF Storage (Amplify Compatible)
+S3_REGION=ap-south-1
+S3_ACCESS_KEY_ID=your_aws_access_key_id
+S3_SECRET_ACCESS_KEY=your_aws_secret_access_key
+S3_BUCKET_NAME=jd-complaint-tickets
+S3_FOLDER_PREFIX=CRM_Tickets/
 
 # S3 Bucket Details
 # Bucket: jd-complaint-tickets
