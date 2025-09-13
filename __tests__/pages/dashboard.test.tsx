@@ -74,6 +74,13 @@ describe("Dashboard Page", () => {
   it("renders dashboard title", async () => {
     render(<DashboardPage />);
 
+    // Wait for loading to complete
+    await waitFor(() => {
+      expect(
+        screen.queryByText("Loading dashboard...")
+      ).not.toBeInTheDocument();
+    });
+
     await waitFor(() => {
       expect(screen.getByText("Dashboard")).toBeInTheDocument();
     });
@@ -118,6 +125,13 @@ describe("Dashboard Page", () => {
 
   it("renders department section", async () => {
     render(<DashboardPage />);
+
+    // Wait for loading to complete
+    await waitFor(() => {
+      expect(
+        screen.queryByText("Loading dashboard...")
+      ).not.toBeInTheDocument();
+    });
 
     await waitFor(() => {
       expect(screen.getByText("Tickets by Department")).toBeInTheDocument();

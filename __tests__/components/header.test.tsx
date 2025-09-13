@@ -32,7 +32,7 @@ describe("Header Component", () => {
     render(<Header />);
 
     expect(screen.getByRole("img")).toBeInTheDocument();
-    expect(screen.getByText("Rashtrawadi Jansunavani")).toBeInTheDocument();
+    expect(screen.getByText("JanSamwad")).toBeInTheDocument();
   });
 
   it("renders login button when user is not logged in", () => {

@@ -1,11 +1,9 @@
 import twilio from "twilio";
 import { uploadPDFToCloud } from "./pdf-upload";
+import { config } from "./config";
 
 // Initialize Twilio client
-const client = twilio(
-  process.env.TWILIO_ACCOUNT_SID,
-  process.env.TWILIO_AUTH_TOKEN
-);
+const client = twilio(config.twilio.accountSid, config.twilio.authToken);
 
 export interface WhatsAppMessage {
   to: string;
@@ -40,7 +38,7 @@ export async function sendWhatsAppMessage({
 
     // Prepare message payload
     const messagePayload: any = {
-      from: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
+      from: config.twilio.whatsappNumber,
       to: formattedNumber,
       body: message,
     };
