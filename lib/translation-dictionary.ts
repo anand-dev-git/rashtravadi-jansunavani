@@ -142,6 +142,12 @@ export const PROBLEM_TRANSLATIONS: ProblemTranslation[] = [
     marathi: "घनकचरा व स्वच्छता",
     category: "waste",
   },
+  {
+    english: "Other",
+    hindi: "अन्य",
+    marathi: "इतर",
+    category: "other",
+  },
 ];
 
 // Function to get English version of a problem from any language
