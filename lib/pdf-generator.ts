@@ -244,7 +244,7 @@ export async function generateTicketPDF(
   doc.setFontSize(8);
   doc.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
   doc.text("Generated on: " + new Date().toLocaleString(), 20, pageHeight - 20);
-  doc.text("Rashtrawadi Jansunavani System", 20, pageHeight - 15);
+  doc.text("JanSamwad System", 20, pageHeight - 15);
 
   // Save the PDF
   const fileName = `ticket_${data.ticketNumber}_${
@@ -313,7 +313,7 @@ export async function generateTicketPDFBase64(
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(16);
   doc.setFont(FONT_NAME, "bold");
-  doc.text("Rashtrawadi Jansunavani", 45, 15);
+  doc.text("JanSamwad", 45, 15);
 
   // Subtitle
   doc.setFontSize(12);
@@ -429,7 +429,7 @@ export async function generateTicketPDFBase64(
   doc.setFontSize(8);
   doc.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
   doc.text("Generated on: " + new Date().toLocaleString(), 20, pageHeight - 20);
-  doc.text("Rashtrawadi Jansunavani System", 20, pageHeight - 15);
+  doc.text("JanSamwad System", 20, pageHeight - 15);
 
   // Return base64 string instead of saving
   return doc.output("datauristring").split(",")[1]; // Remove data:application/pdf;base64, prefix
@@ -631,7 +631,7 @@ export function generatePrintableHTML(
             <div class="logo-text" style="display: none;">RJS</div>
           </div>
           <div class="header-content">
-            <h1>Rashtrawadi Jansunavani</h1>
+            <h1>JanSamwad</h1>
             <div class="header-subtitle">${
               isUpdate ? "Ticket Details" : "Registration Details"
             }</div>
@@ -647,7 +647,7 @@ export function generatePrintableHTML(
         
         <div class="footer">
           <p>Generated on: ${new Date().toLocaleString()}</p>
-          <p>Rashtrawadi Jansunavani System</p>
+          <p>JanSamwad System</p>
         </div>
         
         <div class="no-print">
